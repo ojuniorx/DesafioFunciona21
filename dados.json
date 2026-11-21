@@ -2,7 +2,7 @@
   "app": "Desafio Funciona 21",
   "tipo": "conteudo",
   "versao": 1,
-  "atualizadoEm": "2026-11-21T18:37:10.002Z",
+  "atualizadoEm": "2026-11-21T18:39:47.860Z",
   "config": {
     "inicioDesafio": "2026-11-21",
     "metaAgua": 3,
@@ -28,6 +28,15 @@
       "data": "2026-11-21",
       "texto": "Apesar de ser um conceito difícil de explicar, a maioria das pessoas percebe intuitivamente o que é qualidade de vida. Ou seja, embora o significado de qualidade de vida não seja, por vezes, óbvio para algumas pessoas, a sua noção é clara para toda a gente. A maioria das pessoas relaciona a qualidade de vida com o “sentir-se bem”. De facto, esta noção de qualidade de vida vai de encontro aos principais fatores que a influenciam, como veremos adiante, que são a saúde, o trabalho e o meio ambiente. ",
       "imgUrl": "https://institutoagf.com.br/wp-content/uploads/2024/11/VIDA-SAUDE.jpg",
+      "imgFileId": "",
+      "link": ""
+    },
+    {
+      "id": "mwqr5q5tnb8ea",
+      "titulo": "DECLARAÇÃO",
+      "data": "2026-11-21",
+      "texto": "SUZANA TE AMO !",
+      "imgUrl": "",
       "imgFileId": "",
       "link": ""
     }
