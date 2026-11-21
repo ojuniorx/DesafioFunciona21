@@ -1,0 +1,172 @@
+{
+  "app": "Desafio Funciona 21",
+  "tipo": "conteudo",
+  "versao": 1,
+  "atualizadoEm": "2026-11-21T18:10:13.033Z",
+  "config": {
+    "inicioDesafio": "2026-11-21",
+    "metaAgua": 3,
+    "totalDias": 21,
+    "ghDono": "ojuniorx",
+    "ghRepo": "DesafioFunciona21",
+    "ghCaminho": "dados.json",
+    "ghBranch": "main"
+  },
+  "noticias": [
+    {
+      "id": "mwqod9z38ju77",
+      "titulo": "Bem-vindo ao Desafio Funciona 21!",
+      "data": "2026-11-21",
+      "texto": "Começamos hoje o nosso desafio de 21 dias!\n\nMarque todos os dias o que você cumpriu na aba \"Desafio Diário\" e toque em \"Enviar resultado do dia\". Bons treinos!",
+      "imgUrl": "",
+      "link": ""
+    },
+    {
+      "id": "mwqpziu5jfod6",
+      "titulo": "Qual a importância de ter uma boa qualidade do sono?",
+      "data": "2026-11-21",
+      "texto": "Dormir é muito bom, mas você sabe qual é a real importância do sono para o funcionamento do corpo?\n\nMuito além de relaxar, o sono tem como função eliminar as toxinas do organismo. Ao cair a iluminação natural, o cérebro começa a produzir melatonina, hormônio que diz ao corpo a hora de descansar.\n\nDurante esse processo, acontece a regulação dos hormônios entre outras funções. Portanto, ter uma boa noite de sono pode prevenir doenças como pressão alta, derrame, diabetes, ansiedade e até mesmo tipos de bruxismo, entre muitas outras que serão citadas logo abaixo.\n\nPara que se tenha uma noite tranquila é recomendado que se faça a higiene do sono.",
+      "imgUrl": "https://livasaude.com.br/wp-content/uploads/2021/11/qual-a-importancia-de-ter-uma-boa-qualidade-de-sono-1280x1000-1.jpg",
+      "imgFileId": "",
+      "link": ""
+    }
+  ],
+  "treinos": [
+    {
+      "id": "mwqod9z30hfn7",
+      "titulo": "Treino Full Body - Dia 1",
+      "descricao": "Aquecimento 5 min + 4 voltas:\n• 12 agachamentos\n• 10 flexões (pode ser de joelhos)\n• 15 abdominais\n• 30 segundos de prancha\n\nDescanso de 60 segundos entre as voltas.",
+      "categoria": "Dia 1 - Funcional",
+      "anexo": {
+        "tipo": "link",
+        "url": "https://www.youtube.com/watch?v=ml6cT4AZdqI",
+        "fileId": "",
+        "nome": ""
+      }
+    },
+    {
+      "id": "mwqq0yct8kzd5",
+      "titulo": "Funcional dia 2",
+      "categoria": "Funcional",
+      "descricao": "",
+      "anexo": {
+        "tipo": "video",
+        "url": "https://www.youtube.com/watch?v=O-SM6BNaRfQ&pp=ygURZnVuY2lvbmFsIHRyZWlubyA%3D",
+        "fileId": "",
+        "nome": ""
+      }
+    }
+  ],
+  "nutricao": [
+    {
+      "id": "mwqod9z3i2mer",
+      "titulo": "Hidratação e café da manhã",
+      "descricao": "Beba um copo de água ao acordar.\n\nCafé da manhã sugerido: ovos mexidos + 1 fruta + café sem açúcar.\n\nEvite refrigerantes durante os 21 dias.",
+      "categoria": "Dica do dia",
+      "anexo": {
+        "tipo": "nenhum",
+        "url": "",
+        "fileId": "",
+        "nome": ""
+      }
+    },
+    {
+      "id": "mwqq24slin185",
+      "titulo": "Melhore seu almoço",
+      "categoria": "dica da tarde",
+      "descricao": "com um prato cheio, porém de otimos nutrientes",
+      "anexo": {
+        "tipo": "imagem",
+        "url": "https://i.pinimg.com/736x/bf/22/3f/bf223fcf02b17b09834b414c55211251.jpg",
+        "fileId": "",
+        "nome": ""
+      }
+    }
+  ],
+  "desafios": {
+    "1": {
+      "agua": 3,
+      "fisicos": [
+        {
+          "id": "mwqod9z3upezs",
+          "texto": "20 agachamentos",
+          "treinoId": "",
+          "link": ""
+        },
+        {
+          "id": "mwqod9z3x8yo8",
+          "texto": "1 minuto de prancha (pode dividir em 3x20s)",
+          "treinoId": "",
+          "link": ""
+        }
+      ],
+      "treinosDia": [
+        {
+          "id": "mwqod9z3dnkuj",
+          "texto": "Treino Full Body - Dia 1",
+          "treinoId": "",
+          "link": ""
+        }
+      ],
+      "alimentares": [
+        {
+          "id": "mwqod9z3g6ibl",
+          "texto": "Beber 3 litros de água no dia",
+          "treinoId": "",
+          "link": ""
+        },
+        {
+          "id": "mwqod9z30sw7q",
+          "texto": "Nenhum refrigerante",
+          "treinoId": "",
+          "link": ""
+        },
+        {
+          "id": "mwqod9z30qt1v",
+          "texto": "Comer 2 porções de frutas",
+          "treinoId": "",
+          "link": ""
+        }
+      ]
+    },
+    "2": {
+      "agua": 3,
+      "fisicos": [
+        {
+          "id": "mwqq2dc6orxre",
+          "texto": "10 burpes",
+          "treinoId": "",
+          "link": ""
+        },
+        {
+          "id": "mwqq2jhzsz3pa",
+          "texto": "20 agacha",
+          "treinoId": "",
+          "link": ""
+        },
+        {
+          "id": "mwqq2p3nabptv",
+          "texto": "15 min caminhada",
+          "treinoId": "",
+          "link": ""
+        }
+      ],
+      "treinosDia": [
+        {
+          "id": "mwqq2y336tnq6",
+          "texto": "Funcional dia 2",
+          "treinoId": "mwqq0yct8kzd5",
+          "link": ""
+        }
+      ],
+      "alimentares": [
+        {
+          "id": "mwqq3eg2pr0c3",
+          "texto": "toma 1 Café sem açucar",
+          "treinoId": "",
+          "link": ""
+        }
+      ]
+    }
+  }
+}
