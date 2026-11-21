@@ -1596,6 +1596,7 @@ function telaResultados(){
   html += '<div class="linha-botoes" style="margin-bottom:12px;">' +
     '<button class="btn btn-sec btn-pequeno" data-acao="exportarCSV">⬇️ Exportar CSV</button>' +
     '<button class="btn btn-sec btn-pequeno" data-acao="atualizarResultados">🔄 Atualizar da nuvem</button>' +
+    (alunos.length ? '<button class="btn btn-sec btn-pequeno" style="color:var(--erro);border-color:var(--erro);" data-acao="excluirTodosResultados">🗑️ Excluir todos</button>' : '') +
   '</div>';
 
   html += nuvemLigada()
@@ -1657,10 +1658,71 @@ function telaResultados(){
       '<div class="barra verde"><i style="width:' + l.pct + '%"></i></div>' +
       '<div class="legenda-barra"><span>' + l.feitos + ' de ' + l.total + ' itens (' + l.pct + '%)</span><span>💧 ' + l.agua.toFixed(2).replace(".", ",") + ' / ' + l.meta + ' L</span></div>' +
       detalhe +
+      '<div class="linha-botoes" style="margin-top:10px;">' +
+        '<button class="btn btn-sec btn-pequeno" data-acao="excluirResultadoAluno" data-aluno="' + esc(l.aluno) + '">🗑️ Excluir este aluno</button>' +
+        '<button class="btn btn-sec btn-pequeno" data-acao="excluirResultadoDia" data-aluno="' + esc(l.aluno) + '" data-dia="' + l.dia + '">✂️ Excluir só este dia</button>' +
+      '</div>' +
     '</div>';
   });
 
   return html;
+}
+
+// ---------------------------------------------------------------------
+// EXCLUSÃO DE RESULTADOS
+// Apaga do app E da nuvem (senão a nuvem devolveria os dados de novo).
+// ---------------------------------------------------------------------
+async function apagarNaNuvem(caminho){
+  if(!nuvemLigada()) return true;
+  try{
+    await buscarComTempo(nuvemUrl() + caminho, { method: "DELETE" });
+    return true;
+  }catch(e){ return false; }
+}
+
+function excluirResultadoDia(aluno, dia){
+  abrirModal("🗑️ Excluir resultado",
+    '<p style="margin:0;">Excluir o resultado de <b>' + esc(aluno) + '</b> do <b>Dia ' + esc(String(dia)) + '</b>?<br>' +
+    'Isso apaga também na nuvem.</p>',
+    async function(){
+      if(estado.resultados[aluno]){
+        delete estado.resultados[aluno][dia];
+        if(Object.keys(estado.resultados[aluno]).length === 0) delete estado.resultados[aluno];
+      }
+      salvar();
+      await apagarNaNuvem("/resultados/" + chaveAluno(aluno) + "/" + encodeURIComponent(dia) + ".json");
+      avisoToast("Resultado do dia excluído.");
+      render();
+      return true;
+    }, "Excluir");
+}
+
+function excluirResultadoAluno(aluno){
+  abrirModal("🗑️ Excluir aluno dos resultados",
+    '<p style="margin:0;">Excluir <b>todos</b> os resultados enviados por <b>' + esc(aluno) + '</b>?<br>' +
+    'Isso apaga também na nuvem. Esta ação não pode ser desfeita.</p>',
+    async function(){
+      delete estado.resultados[aluno];
+      salvar();
+      await apagarNaNuvem("/resultados/" + chaveAluno(aluno) + ".json");
+      avisoToast("Resultados de " + aluno + " excluídos.");
+      render();
+      return true;
+    }, "Excluir");
+}
+
+function excluirTodosResultados(){
+  abrirModal("🗑️ Excluir TODOS os resultados",
+    '<p style="margin:0;">Apagar <b>todos</b> os resultados de <b>todos os alunos</b>?<br>' +
+    'Isso apaga também na nuvem. Esta ação não pode ser desfeita.</p>',
+    async function(){
+      estado.resultados = {};
+      salvar();
+      await apagarNaNuvem("/resultados.json");
+      avisoToast("Todos os resultados foram excluídos.");
+      render();
+      return true;
+    }, "Excluir tudo");
 }
 
 function exportarCSV(){
@@ -2498,6 +2560,9 @@ document.addEventListener("click", async function(ev){
   // --- Resultados ---
   if(acao === "exportarCSV"){ exportarCSV(); return; }
   if(acao === "atualizarResultados"){ await atualizarResultadosAgora(); return; }
+  if(acao === "excluirResultadoDia"){ excluirResultadoDia(alvo.getAttribute("data-aluno"), alvo.getAttribute("data-dia")); return; }
+  if(acao === "excluirResultadoAluno"){ excluirResultadoAluno(alvo.getAttribute("data-aluno")); return; }
+  if(acao === "excluirTodosResultados"){ excluirTodosResultados(); return; }
 
   // --- Configurações ---
   if(acao === "salvarConfig"){ salvarConfiguracoes(); return; }
