@@ -346,7 +346,8 @@ const CONFIG_INICIAL = {
   ghDono: "",                 // seu usuário (ou organização) do GitHub
   ghRepo: "",                 // nome do repositório público
   ghCaminho: "dados.json",    // arquivo com o conteúdo dentro do repositório
-  ghBranch: "main"            // ramo (branch) do repositório
+  ghBranch: "main",           // ramo (branch) do repositório
+  nuvemUrl: ""                // endereço do banco grátis (Firebase) p/ os resultados dos alunos
 };
 const CHAVE_DADOS = "desafioFunciona21";
 const CHAVE_SESSAO = "desafioFunciona21_sessao";
@@ -1501,6 +1502,7 @@ function enviarResultado(){
     reg.enviado = true;
     reg.enviadoEm = new Date().toISOString();
     salvar();
+    enviarResultadoNuvem();
     avisoToast("Resultado do dia " + dia + " enviado com sucesso! 🎉");
     return true;
   }, "Confirmar envio");
@@ -1513,6 +1515,8 @@ let filtroAluno = "";
 let filtroDia = "";
 
 async function telaResultados(){
+  // Antes de mostrar, busca na nuvem o que os alunos enviaram
+  await buscarResultadosNuvem();
   const alunos = Object.keys(estado.resultados || {}).sort();
 
   let html = '<h1 class="titulo-tela">📊 Resultados</h1>' +
@@ -1533,7 +1537,12 @@ async function telaResultados(){
 
   html += '<div class="linha-botoes" style="margin-bottom:12px;">' +
     '<button class="btn btn-sec btn-pequeno" data-acao="exportarCSV">⬇️ Exportar CSV</button>' +
+    '<button class="btn btn-sec btn-pequeno" data-acao="atualizarResultados">🔄 Atualizar da nuvem</button>' +
   '</div>';
+
+  html += nuvemLigada()
+    ? '<p class="ajuda" style="margin-bottom:12px;">Nuvem conectada: os resultados enviados pelos alunos aparecem aqui automaticamente.</p>'
+    : '<p class="ajuda" style="margin-bottom:12px;">Dica: configure a <b>nuvem</b> em Configurações para receber os resultados dos alunos automaticamente.</p>';
 
   // Monta as linhas
   const linhas = [];
@@ -1698,6 +1707,20 @@ async function telaConfig(){
         '<button class="btn btn-sec btn-bloco" style="margin-top:8px;" data-acao="copiarLinkAlunos">📋 Copiar link dos alunos</button>'
       : '<p class="ajuda" style="margin-top:12px;">Depois de preencher e salvar, o link para os alunos aparecerá aqui.</p>') +
     '<div id="syncStatus" class="sync-status' + (syncStatusMsg ? " " + (syncStatusMsg.ok ? "ok" : "erro") : "") + '">' + (syncStatusMsg ? esc(syncStatusMsg.texto) : "") + '</div>' +
+  '</div>' +
+
+  '<div class="card">' +
+    '<h3>📥 Resultados dos alunos (nuvem)</h3>' +
+    '<p class="ajuda">Com um banco de dados grátis (Firebase), os resultados que os alunos enviarem ' +
+      'aparecem sozinhos na aba <b>Resultados</b>, com o nome de cada um. O endereço abaixo é enviado ' +
+      'aos alunos junto com o conteúdo publicado.</p>' +
+    '<label class="rotulo">Endereço do banco (Firebase Realtime Database)</label>' +
+    '<input class="campo" id="cfgNuvemUrl" placeholder="https://SEU-PROJETO-default-rtdb.firebaseio.com" value="' + esc(c.nuvemUrl || "") + '" />' +
+    '<div class="linha-botoes" style="margin-top:10px;">' +
+      '<button class="btn btn-pri" data-acao="salvarNuvem">💾 Salvar nuvem</button>' +
+      '<button class="btn btn-sec" data-acao="testarNuvem">🔌 Testar conexão</button>' +
+    '</div>' +
+    '<p class="ajuda">Deixe em branco para desativar. Depois de salvar, clique em <b>Publicar para os alunos</b> no cartão acima.</p>' +
   '</div>' +
 
   '<div class="card">' +
@@ -1926,7 +1949,9 @@ function conteudoPublicavel(){
       ghDono: c.ghDono,
       ghRepo: c.ghRepo,
       ghCaminho: c.ghCaminho,
-      ghBranch: c.ghBranch
+      ghBranch: c.ghBranch,
+      // endereço do banco dos resultados (para o aluno enviar de volta)
+      nuvemUrl: c.nuvemUrl
     },
     noticias: estado.noticias || [],
     treinos: estado.treinos || [],
@@ -2075,6 +2100,99 @@ async function copiarLinkAlunos(){
   }
 }
 
+/* ---------------------------------------------------------------------
+   RESULTADOS NA NUVEM (Firebase Realtime Database - plano grátis)
+   - O ALUNO envia o resultado dele para o banco ao marcar/enviar o dia.
+   - O PROFESSOR lê o banco na aba Resultados e vê o nome de cada aluno.
+   - O endereço do banco é definido pelo professor e vai junto no conteúdo
+     publicado, então o aluno recebe o endereço automaticamente.
+   --------------------------------------------------------------------- */
+
+function nuvemUrl(){
+  let u = String((estado.config && estado.config.nuvemUrl) || "").trim();
+  if(!u) return "";
+  if(!/^https?:\/\//i.test(u)) u = "https://" + u;
+  return u.replace(/\/+$/, "");
+}
+function nuvemLigada(){ return !!nuvemUrl(); }
+// Chave usada no banco (evita problemas com acentos, espaços e maiúsculas)
+function chaveAluno(nome){
+  return encodeURIComponent(String(nome || "").trim().toLowerCase().replace(/\s+/g, "_"));
+}
+
+// Aluno -> nuvem
+async function enviarResultadoNuvem(){
+  if(!ehAluno() || !nuvemLigada()) return;
+  const nome = nomeAluno();
+  const pacote = {
+    nome: nome,
+    atualizadoEm: new Date().toISOString(),
+    dias: estado.resultados[nome] || {}
+  };
+  try{
+    await fetch(nuvemUrl() + "/resultados/" + chaveAluno(nome) + ".json", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(pacote)
+    });
+  }catch(e){ /* sem internet agora: o próximo envio tenta de novo */ }
+}
+
+// Espera o aluno parar de mexer antes de enviar (evita muitos envios seguidos)
+let timerNuvem = null;
+function agendarEnvioNuvem(){
+  if(!ehAluno() || !nuvemLigada()) return;
+  clearTimeout(timerNuvem);
+  timerNuvem = setTimeout(function(){ enviarResultadoNuvem(); }, 1200);
+}
+
+// Nuvem -> professor (junta o que os alunos enviaram)
+async function buscarResultadosNuvem(){
+  if(!nuvemLigada()) return 0;
+  let dados = null;
+  try{
+    const resp = await fetch(nuvemUrl() + "/resultados.json", { cache: "no-store" });
+    if(!resp.ok) return -1;
+    dados = await resp.json();
+  }catch(e){ return -1; }
+  if(!dados) return 0;
+  let qtd = 0;
+  Object.keys(dados).forEach(function(k){
+    const item = dados[k];
+    if(!item || !item.dias) return;
+    const nome = item.nome || k;
+    const atual = estado.resultados[nome] || {};
+    Object.keys(item.dias).forEach(function(dia){ atual[dia] = item.dias[dia]; });
+    estado.resultados[nome] = atual;
+    qtd++;
+  });
+  if(qtd) salvar();
+  return qtd;
+}
+
+// Teste de conexão (aba Configurações)
+async function testarNuvem(){
+  if(!nuvemLigada()){ mostrarSync("Preencha o endereço do banco (nuvem) primeiro.", false); return; }
+  try{
+    const r = await fetch(nuvemUrl() + "/resultados.json", { cache: "no-store" });
+    if(r.status === 401 || r.status === 403){
+      mostrarSync("Conectou, mas as regras de leitura do banco estão bloqueando. Use .read: true.", false);
+      return;
+    }
+    if(!r.ok){ mostrarSync("Não foi possível conectar (código " + r.status + ").", false); return; }
+    mostrarSync("Nuvem conectada! Os resultados dos alunos vão aparecer aqui.", true);
+  }catch(e){
+    mostrarSync("Sem conexão com a nuvem. Confira o endereço digitado.", false);
+  }
+}
+
+function salvarNuvem(){
+  estado.config.nuvemUrl = String($("cfgNuvemUrl").value || "").trim();
+  salvar();
+  mostrarSync("Endereço da nuvem salvo. Agora clique em Publicar para os alunos receberem.", true);
+  render();
+}
+
 // Tenta atualizar sozinho quando o app abre (apenas para alunos)
 async function sincronizarAutomatico(){
   if(!ehAluno()) return;
@@ -2086,6 +2204,8 @@ async function sincronizarAutomatico(){
       render();
     }
   }catch(e){ /* offline ou ainda sem conteúdo publicado: segue normalmente */ }
+  // Depois de receber o conteúdo, envia os resultados deste aluno para a nuvem
+  enviarResultadoNuvem();
 }
 
 /* =========================================================================
@@ -2250,32 +2370,33 @@ document.addEventListener("click", async function(ev){
     const id = alvo.getAttribute("data-itemid");
     const reg = registroAluno(estado.ui.dia, true);
     reg.itens[id] = !reg.itens[id];
-    salvar(); render(); return;
+    salvar(); agendarEnvioNuvem(); render(); return;
   }
   if(acao === "aguaMais"){
     const reg = registroAluno(estado.ui.dia, true);
     reg.agua = Number((Number(reg.agua || 0) + Number(alvo.getAttribute("data-valor"))).toFixed(2));
-    salvar(); render(); return;
+    salvar(); agendarEnvioNuvem(); render(); return;
   }
   if(acao === "aguaMenos"){
     const reg = registroAluno(estado.ui.dia, true);
     reg.agua = Math.max(0, Number((Number(reg.agua || 0) - PASSO_AGUA).toFixed(2)));
-    salvar(); render(); return;
+    salvar(); agendarEnvioNuvem(); render(); return;
   }
   if(acao === "aguaZerar"){
     const reg = registroAluno(estado.ui.dia, true);
-    reg.agua = 0; salvar(); render(); return;
+    reg.agua = 0; salvar(); agendarEnvioNuvem(); render(); return;
   }
   if(acao === "salvarAguaDia"){
     const v = Number($("campoAguaDia").value);
     if(isNaN(v) || v <= 0){ alert("Informe um valor de água válido (maior que zero)."); return; }
     garantirDia(estado.ui.dia).agua = v;
-    salvar(); render(); return;
+    salvar(); agendarEnvioNuvem(); render(); return;
   }
   if(acao === "enviarResultado"){ enviarResultado(); return; }
 
   // --- Resultados ---
   if(acao === "exportarCSV"){ exportarCSV(); return; }
+  if(acao === "atualizarResultados"){ render(); return; }
 
   // --- Configurações ---
   if(acao === "salvarConfig"){ salvarConfiguracoes(); return; }
@@ -2288,6 +2409,8 @@ document.addEventListener("click", async function(ev){
   if(acao === "publicarConteudo"){ await publicarConteudo(); return; }
   if(acao === "baixarConteudoGH"){ await sincronizar(true); return; }
   if(acao === "copiarLinkAlunos"){ await copiarLinkAlunos(); return; }
+  if(acao === "salvarNuvem"){ salvarNuvem(); return; }
+  if(acao === "testarNuvem"){ await testarNuvem(); return; }
   if(acao === "atualizarConteudo"){
     alvo.classList.add("girando");
     await sincronizar(true);
