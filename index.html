@@ -335,6 +335,37 @@ textarea.campo{ min-height:100px; resize:vertical; }
 
 <script>
 /* =========================================================================
+   REDE DE SEGURANÇA GLOBAL
+   Qualquer erro inesperado vai mostrar uma mensagem na tela (em vez de
+   deixar a página toda branca). Também oferece um botão para apagar os
+   dados salvos e recomeçar.
+   ========================================================================= */
+function mostrarErroFatal(mensagem){
+  var app = document.getElementById("app");
+  if(!app) return;
+  app.innerHTML =
+    '<main class="conteudo" style="padding:20px;">' +
+      '<div class="card">' +
+        '<h3>⚠️ O app encontrou um problema</h3>' +
+        '<p class="ajuda" style="word-break:break-word;">' + (mensagem || "Erro inesperado.") + '</p>' +
+        '<p class="ajuda">Tente primeiro <b>recarregar</b>. Se persistir, apague os dados locais abaixo.</p>' +
+        '<div class="linha-botoes" style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">' +
+          '<button class="btn btn-pri" onclick="location.reload()">Recarregar</button>' +
+          '<button class="btn btn-sec" onclick="try{localStorage.clear();sessionStorage.clear();}catch(e){}location.reload();">Apagar dados e reiniciar</button>' +
+        '</div>' +
+        '<p class="ajuda" style="margin-top:12px;font-size:12px;opacity:.7;">Desafio Funciona 21</p>' +
+      '</div>' +
+    '</main>';
+}
+window.addEventListener("error", function(e){
+  mostrarErroFatal((e && e.message ? e.message : "Erro ao carregar o app.") +
+    (e && e.filename ? " (" + e.filename.split("/").pop() + ":" + e.lineno + ")" : ""));
+});
+window.addEventListener("unhandledrejection", function(e){
+  mostrarErroFatal(e && e.reason ? String(e.reason) : "Erro inesperado.");
+});
+
+/* =========================================================================
    SEÇÃO 1 - CONFIGURAÇÕES GERAIS (EDITE AQUI)
    ========================================================================= */
 const CONFIG_INICIAL = {
@@ -2517,9 +2548,13 @@ $("inputImportBackup").addEventListener("change", function(ev){
 /* =========================================================================
    SEÇÃO 18 - INICIALIZAÇÃO
    ========================================================================= */
-normalizar();
-salvar();
-render();
+try{
+  normalizar();
+  salvar();
+  render();
+}catch(e){
+  mostrarErroFatal(String((e && e.message) || e));
+}
 sincronizarAutomatico();
 </script>
 </body>
