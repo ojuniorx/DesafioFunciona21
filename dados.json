@@ -2,7 +2,7 @@
   "app": "Desafio Funciona 21",
   "tipo": "conteudo",
   "versao": 1,
-  "atualizadoEm": "2026-11-21T18:46:01.532Z",
+  "atualizadoEm": "2026-11-21T20:38:37.026Z",
   "config": {
     "inicioDesafio": "2026-11-21",
     "metaAgua": 3,
@@ -23,11 +23,20 @@
       "link": ""
     },
     {
-      "id": "mwqq6r810ujyx",
-      "titulo": "Qualidade de vida",
+      "id": "mwqv6ncvopdij",
+      "titulo": "SISTEMA DE PONTUAÇÃO",
       "data": "2026-11-21",
-      "texto": "Apesar de ser um conceito difícil de explicar, a maioria das pessoas percebe intuitivamente o que é qualidade de vida. Ou seja, embora o significado de qualidade de vida não seja, por vezes, óbvio para algumas pessoas, a sua noção é clara para toda a gente. A maioria das pessoas relaciona a qualidade de vida com o “sentir-se bem”. De facto, esta noção de qualidade de vida vai de encontro aos principais fatores que a influenciam, como veremos adiante, que são a saúde, o trabalho e o meio ambiente. ",
-      "imgUrl": "https://institutoagf.com.br/wp-content/uploads/2024/11/VIDA-SAUDE.jpg",
+      "texto": "Durante os 21 dias, os participantes poderão acumular pontos realizando atividades e cumprindo as missões propostas.\n\nPostar foto ou vídeo de corrida\t15 pontos\nCumprir a dica alimentar diária da Caroline\t15 pontos\nCaminhar durante 30 minutos\t10 pontos\nRealizar atividade física por pelo menos 21 minutos\t10 pontos\nFazer treino do BOX FUNCIONA e enviar comprovante\t15 pontos\nRealizar mais de duas atividades diferentes no dia\t10 pontos\nPostar foto comprovando a meta individual de hidratação\t5 pontos\n\nPontuação por live:\nParticipação      \t    Pontos\nPresença confirmada\t5\nParticipação no quiz        5\nRespostas corretas\t  Até 5\nTotal máximo\t15 pontos",
+      "imgUrl": "https://cdn-icons-png.flaticon.com/512/3629/3629625.png",
+      "imgFileId": "",
+      "link": ""
+    },
+    {
+      "id": "mwqv8x8vbveri",
+      "titulo": "Regras importantes",
+      "data": "2026-11-21",
+      "texto": "1. Cada atividade poderá ser contabilizada apenas uma vez.\n2. Não será permitido pontuar duas vezes pela mesma atividade.\n3. O bônus por mais de duas atividades exige pelo menos três atividades diferentes no mesmo dia.\n4. A pontuação máxima diária será de 60 pontos.\n5. Todas as atividades deverão ser comprovadas para validação da equipe.",
+      "imgUrl": "https://i.pinimg.com/736x/c3/25/fa/c325fa703351895733d34c49dac9a6c5.jpg",
       "imgFileId": "",
       "link": ""
     }
