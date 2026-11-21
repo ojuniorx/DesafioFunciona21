@@ -2,7 +2,7 @@
   "app": "Desafio Funciona 21",
   "tipo": "conteudo",
   "versao": 1,
-  "atualizadoEm": "2026-11-21T18:12:41.017Z",
+  "atualizadoEm": "2026-11-21T18:37:10.002Z",
   "config": {
     "inicioDesafio": "2026-11-21",
     "metaAgua": 3,
@@ -10,7 +10,8 @@
     "ghDono": "ojuniorx",
     "ghRepo": "DesafioFunciona21",
     "ghCaminho": "dados.json",
-    "ghBranch": "main"
+    "ghBranch": "main",
+    "nuvemUrl": "https://console.firebase.google.com/project/desafiofunciona21/database/desafiofunciona21-default-rtdb/data/~2F"
   },
   "noticias": [
     {
