@@ -1608,11 +1608,15 @@ function telaResultados(){
   alunos.forEach(function(aluno){
     Object.keys(estado.resultados[aluno] || {}).forEach(function(dia){
       const reg = estado.resultados[aluno][dia];
-      if(!reg || !reg.enviado) return;
+      if(!reg || typeof reg !== "object") return;
       if(filtroAluno && filtroAluno !== aluno) return;
       if(filtroDia && String(filtroDia) !== String(dia)) return;
       const d = Number(dia);
       const itensReg = reg.itens || {};
+      const marcados = Object.keys(itensReg).filter(function(k){ return itensReg[k]; }).length;
+      const agua = Number(reg.agua || 0);
+      // Mostra o dia se o aluno marcou algo, registrou água ou enviou o resultado
+      if(!reg.enviado && marcados === 0 && agua <= 0) return;
       let total = 0, feitos = 0;
       ["fisicos","treinosDia","alimentares"].forEach(function(secao){
         itensDaSecao(d, secao).forEach(function(it){
@@ -1624,8 +1628,8 @@ function telaResultados(){
         aluno: aluno, dia: d, data: dataDoDia(d),
         feitos: feitos, total: total,
         pct: total ? Math.round(feitos / total * 100) : 0,
-        agua: Number(reg.agua || 0), meta: metaAguaDoDia(d),
-        enviadoEm: reg.enviadoEm, reg: reg
+        agua: agua, meta: metaAguaDoDia(d),
+        enviado: !!reg.enviado, enviadoEm: reg.enviadoEm, reg: reg
       });
     });
   });
@@ -1652,9 +1656,12 @@ function telaResultados(){
       detalhe = '<div class="card" style="margin-top:8px;"><h3>Detalhe</h3>' + lista +
         '<p style="margin-top:8px;">💧 Água: <b>' + l.agua.toFixed(2).replace(".", ",") + ' L</b> de ' + l.meta + ' L</p></div>';
     }
+    const selo = l.enviado
+      ? ' <span style="color:var(--ok);font-weight:700;">✅ enviado</span> ' + formatarDataHora(l.enviadoEm)
+      : ' <span style="color:var(--cinza);font-weight:700;">⏳ em andamento (não enviado)</span>';
     html += '<div class="card">' +
       '<h3>🙋 ' + esc(l.aluno) + '</h3>' +
-      '<div class="data">Dia ' + l.dia + ' • ' + formatarData(l.data) + ' • enviado ' + formatarDataHora(l.enviadoEm) + '</div>' +
+      '<div class="data">Dia ' + l.dia + ' • ' + formatarData(l.data) + ' •' + selo + '</div>' +
       '<div class="barra verde"><i style="width:' + l.pct + '%"></i></div>' +
       '<div class="legenda-barra"><span>' + l.feitos + ' de ' + l.total + ' itens (' + l.pct + '%)</span><span>💧 ' + l.agua.toFixed(2).replace(".", ",") + ' / ' + l.meta + ' L</span></div>' +
       detalhe +
@@ -1730,9 +1737,12 @@ function exportarCSV(){
   Object.keys(estado.resultados || {}).sort().forEach(function(aluno){
     Object.keys(estado.resultados[aluno] || {}).forEach(function(dia){
       const reg = estado.resultados[aluno][dia];
-      if(!reg || !reg.enviado) return;
+      if(!reg || typeof reg !== "object") return;
       const d = Number(dia);
       const itensReg = reg.itens || {};
+      const marcados = Object.keys(itensReg).filter(function(k){ return itensReg[k]; }).length;
+      const agua = Number(reg.agua || 0);
+      if(!reg.enviado && marcados === 0 && agua <= 0) return;
       let total = 0, feitos = 0;
       ["fisicos","treinosDia","alimentares"].forEach(function(secao){
         itensDaSecao(d, secao).forEach(function(it){ total++; if(itensReg[it.id]) feitos++; });
@@ -1740,9 +1750,9 @@ function exportarCSV(){
       linhas.push([
         aluno, d, formatarData(dataDoDia(d)), feitos, total,
         (total ? Math.round(feitos / total * 100) : 0),
-        Number(reg.agua || 0).toFixed(2).replace(".", ","),
+        agua.toFixed(2).replace(".", ","),
         metaAguaDoDia(d),
-        formatarDataHora(reg.enviadoEm)
+        reg.enviado ? formatarDataHora(reg.enviadoEm) : "(não enviado)"
       ]);
     });
   });
@@ -2281,6 +2291,7 @@ function agendarEnvioNuvem(){
 
 // Nuvem -> professor (junta o que os alunos enviaram)
 // Retorna quantos dias mudaram (0 = nada novo, -1 = falha de conexão)
+let ultimaNuvemAlunos = 0;
 async function buscarResultadosNuvem(){
   if(!nuvemLigada()) return 0;
   let dados = null;
@@ -2290,12 +2301,14 @@ async function buscarResultadosNuvem(){
     dados = await resp.json();
   }catch(e){ return -1; }
   if(!dados) return 0;
-  let mudou = 0;
+  let mudou = 0, totalAlunos = 0;
   Object.keys(dados).forEach(function(k){
     const item = dados[k];
     if(!item || !item.dias) return;
     const nome = item.nome || k;
     const atual = estado.resultados[nome] || {};
+    const temDias = Object.keys(item.dias).length > 0;
+    if(temDias) totalAlunos++;
     Object.keys(item.dias).forEach(function(dia){
       const novoDia = item.dias[dia];
       if(!novoDia || typeof novoDia !== "object") return;   // ignora dias vazios/nulos
@@ -2304,6 +2317,7 @@ async function buscarResultadosNuvem(){
     });
     estado.resultados[nome] = atual;
   });
+  ultimaNuvemAlunos = totalAlunos;
   if(mudou) salvar();
   return mudou;
 }
@@ -2324,8 +2338,8 @@ async function atualizarResultadosAgora(){
   avisoToast("Buscando resultados...");
   const mudou = await buscarResultadosNuvem();
   render();
-  if(mudou > 0) avisoToast("Resultados atualizados! ✅");
-  else if(mudou === 0) avisoToast("Nenhum resultado novo.");
+  if(mudou > 0) avisoToast("Resultados atualizados! ✅ (" + ultimaNuvemAlunos + " aluno(s) na nuvem)");
+  else if(mudou === 0) avisoToast("Nada novo. Alunos na nuvem: " + ultimaNuvemAlunos + ".");
   else avisoToast("Não foi possível conectar à nuvem. Confira o endereço e as regras.");
 }
 
