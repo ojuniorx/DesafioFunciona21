@@ -763,28 +763,44 @@ const ABAS = [
 
 async function render(){
   const app = $("app");
+  try{
+    if(!estado.sessao){ app.innerHTML = telaLogin(); return; }
 
-  if(!estado.sessao){ app.innerHTML = telaLogin(); return; }
+    const abas = ABAS.filter(function(a){ return !a.somenteProf || ehProfessor(); });
+    if(!abas.some(function(a){ return a.id === estado.ui.aba; })) estado.ui.aba = "noticias";
 
-  const abas = ABAS.filter(function(a){ return !a.somenteProf || ehProfessor(); });
-  if(!abas.some(function(a){ return a.id === estado.ui.aba; })) estado.ui.aba = "noticias";
+    let corpo = "";
+    if(estado.ui.aba === "noticias")   corpo = await telaNoticias();
+    if(estado.ui.aba === "treinos")    corpo = await telaBiblioteca("treinos");
+    if(estado.ui.aba === "nutricao")   corpo = await telaBiblioteca("nutricao");
+    if(estado.ui.aba === "diario")     corpo = await telaDiario();
+    if(estado.ui.aba === "resultados") corpo = await telaResultados();
+    if(estado.ui.aba === "config")     corpo = await telaConfig();
 
-  let corpo = "";
-  if(estado.ui.aba === "noticias")   corpo = await telaNoticias();
-  if(estado.ui.aba === "treinos")    corpo = await telaBiblioteca("treinos");
-  if(estado.ui.aba === "nutricao")   corpo = await telaBiblioteca("nutricao");
-  if(estado.ui.aba === "diario")     corpo = await telaDiario();
-  if(estado.ui.aba === "resultados") corpo = await telaResultados();
-  if(estado.ui.aba === "config")     corpo = await telaConfig();
-
-  app.innerHTML =
-    barraTopo() +
-    '<nav class="nav">' + abas.map(function(a){
-      return '<button data-acao="ir" data-aba="' + a.id + '" class="' + (estado.ui.aba === a.id ? "ativo" : "") + '">' +
-             '<span class="em">' + a.em + '</span><span>' + a.nome + '</span></button>';
-    }).join("") + '</nav>' +
-    '<main class="conteudo">' + corpo + '</main>';
+    app.innerHTML =
+      barraTopo() +
+      '<nav class="nav">' + abas.map(function(a){
+        return '<button data-acao="ir" data-aba="' + a.id + '" class="' + (estado.ui.aba === a.id ? "ativo" : "") + '">' +
+               '<span class="em">' + a.em + '</span><span>' + a.nome + '</span></button>';
+      }).join("") + '</nav>' +
+      '<main class="conteudo">' + corpo + '</main>';
+  }catch(e){
+    // Rede de segurança: se algo der errado, mostra uma mensagem em vez de tela branca
+    app.innerHTML =
+      '<main class="conteudo"><div class="card">' +
+        '<h3>⚠️ Ops, algo deu errado</h3>' +
+        '<p class="ajuda">' + esc(String((e && e.message) || e)) + '</p>' +
+        '<div class="linha-botoes" style="margin-top:10px;">' +
+          '<button class="btn btn-pri" data-acao="recarregar">Recarregar app</button>' +
+          '<button class="btn btn-sec" data-acao="irLogin">Ir para o login</button>' +
+        '</div>' +
+      '</div></main>';
+  }
 }
+
+// Botões da tela de erro
+function recarregarApp(){ location.reload(); }
+function irParaLogin(){ estado.sessao = null; salvar(); salvarSessao(); estado.ui.aba = "noticias"; render(); }
 
 function barraTopo(){
   const perfil = ehProfessor() ? "Professor" : "Aluno";
@@ -1514,9 +1530,10 @@ function enviarResultado(){
 let filtroAluno = "";
 let filtroDia = "";
 
-async function telaResultados(){
-  // Antes de mostrar, busca na nuvem o que os alunos enviaram
-  await buscarResultadosNuvem();
+function telaResultados(){
+  // Mostra o que já temos na hora e busca a nuvem em segundo plano
+  // (assim a tela NUNCA fica branca esperando a internet)
+  atualizarResultadosEmSegundoPlano();
   const alunos = Object.keys(estado.resultados || {}).sort();
 
   let html = '<h1 class="titulo-tela">📊 Resultados</h1>' +
@@ -2001,7 +2018,7 @@ async function lerConteudoRemoto(){
   const t = tokenGH();
   if(t) cabecalhos.Authorization = "Bearer " + t;
   const url = origem + (origem.indexOf("?") >= 0 ? "&" : "?") + "cache=" + Date.now();
-  const resp = await fetch(url, { headers: cabecalhos, cache: "no-store" });
+  const resp = await buscarComTempo(url, { headers: cabecalhos, cache: "no-store" });
   if(resp.status === 404) throw new Error("O conteúdo ainda não foi publicado pelo professor.");
   if(resp.status === 403) throw new Error("Limite de acessos ao GitHub atingido. Tente novamente mais tarde.");
   if(!resp.ok) throw new Error("Não foi possível baixar o conteúdo (código " + resp.status + ").");
@@ -2055,7 +2072,7 @@ async function publicarConteudo(){
   // 1) Descobre se o arquivo já existe (para pegar o "sha", exigido para atualizar)
   let sha = null;
   try{
-    const r = await fetch(api + "?ref=" + encodeURIComponent(g.branch), { headers: cab, cache: "no-store" });
+    const r = await buscarComTempo(api + "?ref=" + encodeURIComponent(g.branch), { headers: cab, cache: "no-store" });
     if(r.ok){ const j = await r.json(); sha = j && j.sha ? j.sha : null; }
     else if(r.status === 401){ mostrarSync("Token inválido ou expirado. Gere um novo token.", false); return; }
     else if(r.status === 404){ sha = null; }
@@ -2073,7 +2090,7 @@ async function publicarConteudo(){
 
   let resp;
   try{
-    resp = await fetch(api, { method: "PUT", headers: cab, body: JSON.stringify(corpo) });
+    resp = await buscarComTempo(api, { method: "PUT", headers: cab, body: JSON.stringify(corpo) });
   }catch(e){ mostrarSync("Sem conexão com o GitHub. Tente novamente.", false); return; }
 
   if(resp.ok){
@@ -2108,6 +2125,17 @@ async function copiarLinkAlunos(){
      publicado, então o aluno recebe o endereço automaticamente.
    --------------------------------------------------------------------- */
 
+// Busca na internet com limite de tempo (evita a tela travar esperando)
+async function buscarComTempo(url, opcoes){
+  const ctrl = new AbortController();
+  const t = setTimeout(function(){ ctrl.abort(); }, 8000);
+  try{
+    const r = await fetch(url, Object.assign({ signal: ctrl.signal }, opcoes || {}));
+    clearTimeout(t);
+    return r;
+  }catch(e){ clearTimeout(t); throw e; }
+}
+
 function nuvemUrl(){
   let u = String((estado.config && estado.config.nuvemUrl) || "").trim();
   if(!u) return "";
@@ -2130,7 +2158,7 @@ async function enviarResultadoNuvem(){
     dias: estado.resultados[nome] || {}
   };
   try{
-    await fetch(nuvemUrl() + "/resultados/" + chaveAluno(nome) + ".json", {
+    await buscarComTempo(nuvemUrl() + "/resultados/" + chaveAluno(nome) + ".json", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(pacote)
@@ -2147,34 +2175,58 @@ function agendarEnvioNuvem(){
 }
 
 // Nuvem -> professor (junta o que os alunos enviaram)
+// Retorna quantos dias mudaram (0 = nada novo, -1 = falha de conexão)
 async function buscarResultadosNuvem(){
   if(!nuvemLigada()) return 0;
   let dados = null;
   try{
-    const resp = await fetch(nuvemUrl() + "/resultados.json", { cache: "no-store" });
+    const resp = await buscarComTempo(nuvemUrl() + "/resultados.json", { cache: "no-store" });
     if(!resp.ok) return -1;
     dados = await resp.json();
   }catch(e){ return -1; }
   if(!dados) return 0;
-  let qtd = 0;
+  let mudou = 0;
   Object.keys(dados).forEach(function(k){
     const item = dados[k];
     if(!item || !item.dias) return;
     const nome = item.nome || k;
     const atual = estado.resultados[nome] || {};
-    Object.keys(item.dias).forEach(function(dia){ atual[dia] = item.dias[dia]; });
+    Object.keys(item.dias).forEach(function(dia){
+      const novo = JSON.stringify(item.dias[dia]);
+      if(novo !== JSON.stringify(atual[dia] || null)){ atual[dia] = item.dias[dia]; mudou++; }
+    });
     estado.resultados[nome] = atual;
-    qtd++;
   });
-  if(qtd) salvar();
-  return qtd;
+  if(mudou) salvar();
+  return mudou;
+}
+
+// Atualiza a aba Resultados em segundo plano (sem travar a tela)
+let buscandoResultados = false;
+async function atualizarResultadosEmSegundoPlano(){
+  if(buscandoResultados || !nuvemLigada() || !ehProfessor()) return;
+  buscandoResultados = true;
+  const mudou = await buscarResultadosNuvem();
+  buscandoResultados = false;
+  if(mudou > 0 && estado.ui.aba === "resultados") render();
+}
+
+// Botão "Atualizar da nuvem"
+async function atualizarResultadosAgora(){
+  if(!nuvemLigada()){ avisoToast("Configure a nuvem em Configurações primeiro."); return; }
+  avisoToast("Buscando resultados...");
+  const mudou = await buscarResultadosNuvem();
+  render();
+  if(mudou > 0) avisoToast("Resultados atualizados! ✅");
+  else if(mudou === 0) avisoToast("Nenhum resultado novo.");
+  else avisoToast("Não foi possível conectar à nuvem. Confira o endereço e as regras.");
 }
 
 // Teste de conexão (aba Configurações)
 async function testarNuvem(){
   if(!nuvemLigada()){ mostrarSync("Preencha o endereço do banco (nuvem) primeiro.", false); return; }
   try{
-    const r = await fetch(nuvemUrl() + "/resultados.json", { cache: "no-store" });
+    const r = await buscarComTempo(nuvemUrl() + "/resultados.json", { cache: "no-store" });
     if(r.status === 401 || r.status === 403){
       mostrarSync("Conectou, mas as regras de leitura do banco estão bloqueando. Use .read: true.", false);
       return;
@@ -2290,6 +2342,10 @@ document.addEventListener("click", async function(ev){
   if(!alvo) return;
   const acao = alvo.getAttribute("data-acao");
 
+  // --- Tela de erro ---
+  if(acao === "recarregar"){ recarregarApp(); return; }
+  if(acao === "irLogin"){ irParaLogin(); return; }
+
   // --- Login / sessão ---
   if(acao === "entrarAluno"){
     const nome = $("entradaNomeAluno").value.trim();
@@ -2396,7 +2452,7 @@ document.addEventListener("click", async function(ev){
 
   // --- Resultados ---
   if(acao === "exportarCSV"){ exportarCSV(); return; }
-  if(acao === "atualizarResultados"){ render(); return; }
+  if(acao === "atualizarResultados"){ await atualizarResultadosAgora(); return; }
 
   // --- Configurações ---
   if(acao === "salvarConfig"){ salvarConfiguracoes(); return; }
