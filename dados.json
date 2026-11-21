@@ -2,7 +2,7 @@
   "app": "Desafio Funciona 21",
   "tipo": "conteudo",
   "versao": 1,
-  "atualizadoEm": "2026-11-21T18:10:13.033Z",
+  "atualizadoEm": "2026-11-21T18:12:41.017Z",
   "config": {
     "inicioDesafio": "2026-11-21",
     "metaAgua": 3,
@@ -22,11 +22,11 @@
       "link": ""
     },
     {
-      "id": "mwqpziu5jfod6",
-      "titulo": "Qual a importância de ter uma boa qualidade do sono?",
+      "id": "mwqq6r810ujyx",
+      "titulo": "Qualidade de vida",
       "data": "2026-11-21",
-      "texto": "Dormir é muito bom, mas você sabe qual é a real importância do sono para o funcionamento do corpo?\n\nMuito além de relaxar, o sono tem como função eliminar as toxinas do organismo. Ao cair a iluminação natural, o cérebro começa a produzir melatonina, hormônio que diz ao corpo a hora de descansar.\n\nDurante esse processo, acontece a regulação dos hormônios entre outras funções. Portanto, ter uma boa noite de sono pode prevenir doenças como pressão alta, derrame, diabetes, ansiedade e até mesmo tipos de bruxismo, entre muitas outras que serão citadas logo abaixo.\n\nPara que se tenha uma noite tranquila é recomendado que se faça a higiene do sono.",
-      "imgUrl": "https://livasaude.com.br/wp-content/uploads/2021/11/qual-a-importancia-de-ter-uma-boa-qualidade-de-sono-1280x1000-1.jpg",
+      "texto": "Apesar de ser um conceito difícil de explicar, a maioria das pessoas percebe intuitivamente o que é qualidade de vida. Ou seja, embora o significado de qualidade de vida não seja, por vezes, óbvio para algumas pessoas, a sua noção é clara para toda a gente. A maioria das pessoas relaciona a qualidade de vida com o “sentir-se bem”. De facto, esta noção de qualidade de vida vai de encontro aos principais fatores que a influenciam, como veremos adiante, que são a saúde, o trabalho e o meio ambiente. ",
+      "imgUrl": "https://institutoagf.com.br/wp-content/uploads/2024/11/VIDA-SAUDE.jpg",
       "imgFileId": "",
       "link": ""
     }
