@@ -1,0 +1,2347 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#0B3C8C" />
+<title>Desafio Funciona 21</title>
+
+<!-- =====================================================================
+     DESAFIO FUNCIONA 21 - VERSÃO 1 (MVP)
+     Arquivo único: HTML + CSS + JavaScript puro (sem frameworks, sem instalação)
+     Funciona abrindo direto no navegador do PC e do celular (offline).
+     ===================================================================== -->
+
+<style>
+/* =======================================================================
+   SEÇÃO 1 - VARIÁVEIS DE CORES E ESTILO GERAL
+   (mude os valores abaixo para mudar as cores do app inteiro)
+   ======================================================================= */
+:root{
+  --azul:#1E6FE8;            /* azul principal */
+  --azul-escuro:#0B3C8C;     /* azul escuro */
+  --azul-claro:#EAF2FF;      /* azul claro (fundos suaves) */
+  --branco:#FFFFFF;          /* fundo branco */
+  --texto:#2B3445;           /* texto cinza-escuro */
+  --cinza:#6B7280;           /* texto secundário */
+  --borda:#E3E9F2;           /* linhas e contornos */
+  --ok:#16A34A;              /* verde (feito) */
+  --erro:#DC2626;            /* vermelho (excluir) */
+  --radius:16px;             /* cantos arredondados */
+  --sombra:0 4px 14px rgba(11,60,140,.08);
+}
+
+/* =======================================================================
+   SEÇÃO 2 - RESET E BASE
+   ======================================================================= */
+*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html,body{ margin:0; padding:0; }
+body{
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  color:var(--texto);
+  background:#F7F9FD;
+  font-size:16px;
+  line-height:1.45;
+}
+img{ max-width:100%; display:block; }
+button{ font-family:inherit; cursor:pointer; }
+input,select,textarea{ font-family:inherit; font-size:16px; color:var(--texto); }
+
+/* =======================================================================
+   SEÇÃO 3 - BARRA DE TOPO (logo + usuário + sair)
+   ======================================================================= */
+.topbar{
+  position:sticky; top:0; z-index:30;
+  background:linear-gradient(90deg,var(--azul-escuro),var(--azul));
+  color:#fff;
+  padding:10px 12px;
+  display:flex; align-items:center; gap:10px;
+  box-shadow:0 2px 10px rgba(11,60,140,.25);
+  padding-top:calc(10px + env(safe-area-inset-top));
+}
+.logo{ display:flex; align-items:center; gap:8px; font-weight:800; font-size:17px; letter-spacing:.2px; }
+.logo .icone{
+  width:32px; height:32px; border-radius:10px; background:#fff; color:var(--azul-escuro);
+  display:flex; align-items:center; justify-content:center; font-size:18px; flex:0 0 auto;
+}
+.logo small{ display:block; font-weight:600; font-size:11px; opacity:.85; letter-spacing:0; }
+.topbar .espaco{ flex:1; }
+.chip-usuario{
+  background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.35);
+  color:#fff; border-radius:999px; padding:6px 12px; font-size:13px; font-weight:600;
+  max-width:38vw; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.btn-sair{
+  background:#fff; color:var(--azul-escuro); border:none; border-radius:999px;
+  padding:8px 14px; font-size:13px; font-weight:700;
+}
+
+/* =======================================================================
+   SEÇÃO 4 - NAVEGAÇÃO (abas)
+   - celular: barra fixa embaixo
+   - PC: barra horizontal abaixo do topo
+   ======================================================================= */
+.nav{
+  position:fixed; bottom:0; left:0; right:0; z-index:40;
+  background:#fff; border-top:1px solid var(--borda);
+  display:flex;
+  padding-bottom:env(safe-area-inset-bottom);
+  box-shadow:0 -2px 12px rgba(11,60,140,.06);
+}
+.nav button{
+  flex:1; background:none; border:none; padding:8px 2px 9px;
+  display:flex; flex-direction:column; align-items:center; gap:2px;
+  color:var(--cinza); font-size:10.5px; font-weight:600;
+}
+.nav button .em{ font-size:20px; line-height:1; }
+.nav button.ativo{ color:var(--azul); }
+.nav button.ativo .em{ transform:translateY(-1px); }
+
+/* =======================================================================
+   SEÇÃO 5 - CONTEÚDO E COMPONENTES
+   ======================================================================= */
+.conteudo{ max-width:920px; margin:0 auto; padding:14px 12px 96px; }
+
+h1.titulo-tela{ font-size:20px; margin:4px 0 2px; }
+p.sub{ color:var(--cinza); font-size:13.5px; margin:0 0 14px; }
+
+.card{
+  background:#fff; border:1px solid var(--borda); border-radius:var(--radius);
+  box-shadow:var(--sombra); padding:14px; margin-bottom:12px;
+}
+.card h3{ margin:0 0 4px; font-size:16.5px; }
+.card .data{ color:var(--cinza); font-size:12.5px; margin-bottom:8px; }
+.card .texto{ font-size:15px; white-space:pre-wrap; }
+
+.card-acoes{ display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+
+.btn{
+  border:none; border-radius:12px; padding:12px 16px; font-size:15px; font-weight:700;
+  display:inline-flex; align-items:center; justify-content:center; gap:6px; min-height:46px;
+}
+.btn-pri{ background:var(--azul); color:#fff; }
+.btn-pri:active{ background:var(--azul-escuro); }
+.btn-sec{ background:var(--azul-claro); color:var(--azul-escuro); }
+.btn-ok{ background:#E7F8EE; color:var(--ok); }
+.btn-erro{ background:#FDECEC; color:var(--erro); }
+.btn-bloco{ width:100%; }
+.btn-pequeno{ padding:8px 12px; font-size:13.5px; min-height:38px; border-radius:10px; }
+
+.linha-botoes{ display:flex; gap:8px; flex-wrap:wrap; }
+
+.vazio{
+  text-align:center; color:var(--cinza); font-size:14px;
+  padding:26px 14px; background:#fff; border:1px dashed var(--borda); border-radius:var(--radius);
+}
+
+.rotulo{ display:block; font-size:13.5px; font-weight:700; margin:12px 0 5px; }
+.campo{
+  width:100%; padding:12px 12px; border:1px solid var(--borda); border-radius:12px;
+  background:#fff; min-height:48px;
+}
+textarea.campo{ min-height:100px; resize:vertical; }
+.ajuda{ font-size:12.5px; color:var(--cinza); margin-top:4px; }
+
+.aviso{
+  background:var(--azul-claro); border:1px solid #CFE0FF; color:var(--azul-escuro);
+  border-radius:14px; padding:12px 14px; font-size:13.5px; margin-bottom:12px;
+}
+.aviso.aviso-amarelo{ background:#FFF8E6; border-color:#F6E2A8; color:#7A5B00; }
+
+/* --- Anexos --- */
+.anexo-img{ border-radius:12px; margin-top:10px; border:1px solid var(--borda); cursor:zoom-in; }
+.anexo-video, .anexo-iframe{
+  width:100%; border-radius:12px; margin-top:10px; background:#000; border:none;
+}
+.anexo-iframe{ height:200px; }
+
+/* Capa clicável do YouTube (toque nela para abrir o vídeo no YouTube).
+   Funciona sempre, mesmo quando o app está aberto direto do disco (file://),
+   situação em que o player embutido do YouTube é bloqueado. */
+.video-capa{
+  position:relative; display:block; margin-top:10px; border-radius:12px;
+  overflow:hidden; border:1px solid var(--borda); background:#000;
+}
+.video-capa img{ width:100%; display:block; }
+.video-capa .video-play{
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:58px; height:58px; border-radius:50%; background:rgba(30,111,232,.92);
+  color:#fff; display:flex; align-items:center; justify-content:center;
+  font-size:24px; padding-left:5px;
+}
+
+/* --- Desafio diário --- */
+.seletor-dia{
+  display:flex; align-items:center; gap:8px; justify-content:space-between;
+  background:#fff; border:1px solid var(--borda); border-radius:var(--radius);
+  padding:10px; box-shadow:var(--sombra); margin-bottom:12px;
+}
+.seletor-dia .centro{ text-align:center; flex:1; }
+.seletor-dia .centro b{ display:block; font-size:17px; }
+.seletor-dia .centro span{ font-size:12px; color:var(--cinza); }
+.btn-seta{
+  width:46px; height:46px; border-radius:12px; border:1px solid var(--borda);
+  background:#fff; font-size:18px; color:var(--azul-escuro);
+}
+
+.subabas{ display:flex; gap:6px; overflow-x:auto; padding-bottom:6px; margin-bottom:10px; }
+.subabas button{
+  white-space:nowrap; border:1px solid var(--borda); background:#fff; color:var(--cinza);
+  border-radius:999px; padding:9px 14px; font-size:13.5px; font-weight:700;
+}
+.subabas button.ativo{ background:var(--azul); border-color:var(--azul); color:#fff; }
+
+.item-linha{
+  display:flex; align-items:flex-start; gap:10px; padding:11px 0; border-bottom:1px solid var(--borda);
+}
+.item-linha:last-child{ border-bottom:none; }
+.item-linha .txt{ flex:1; font-size:15px; }
+.check{
+  flex:0 0 auto; width:44px; height:44px; border-radius:12px; border:2px solid var(--borda);
+  background:#fff; color:transparent; font-size:20px; font-weight:800;
+  display:flex; align-items:center; justify-content:center;
+}
+.check.marcado{ background:var(--ok); border-color:var(--ok); color:#fff; }
+
+.barra{ height:14px; background:var(--azul-claro); border-radius:999px; overflow:hidden; }
+.barra > i{ display:block; height:100%; background:var(--azul); border-radius:999px; transition:width .25s; }
+.barra.verde > i{ background:var(--ok); }
+.legenda-barra{ display:flex; justify-content:space-between; font-size:12.5px; color:var(--cinza); margin-top:6px; }
+
+.badge{ display:inline-block; font-size:11.5px; font-weight:800; padding:3px 9px; border-radius:999px; }
+.badge-ok{ background:#E7F8EE; color:var(--ok); }
+.badge-pend{ background:#FFF8E6; color:#8A6A00; }
+
+.filtros{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
+.filtros select, .filtros input{ flex:1; min-width:140px; }
+
+.tabela{ width:100%; border-collapse:collapse; font-size:13.5px; background:#fff; }
+.tabela th, .tabela td{ text-align:left; padding:9px 8px; border-bottom:1px solid var(--borda); vertical-align:top; }
+.tabela th{ background:var(--azul-claro); color:var(--azul-escuro); font-size:12.5px; }
+
+/* --- Modal --- */
+.modal-fundo{
+  position:fixed; inset:0; background:rgba(11,26,53,.55); z-index:100;
+  display:flex; align-items:flex-end; justify-content:center; padding:0;
+}
+.modal{
+  background:#fff; width:100%; max-width:560px; max-height:92vh; overflow:auto;
+  border-radius:20px 20px 0 0; padding:16px;
+}
+.modal h3{ margin:0 0 10px; font-size:18px; }
+.modal-acoes{ display:flex; gap:8px; margin-top:16px; }
+.modal-acoes .btn{ flex:1; }
+
+/* --- Imagem ampliada --- */
+.lightbox{
+  position:fixed; inset:0; background:rgba(0,0,0,.92); z-index:200;
+  display:flex; align-items:center; justify-content:center; padding:14px;
+}
+.lightbox[hidden]{ display:none; }
+.lightbox img{ max-width:100%; max-height:88vh; border-radius:12px; }
+.lightbox .fechar{
+  position:absolute; top:14px; right:14px; background:#fff; border:none; border-radius:999px;
+  width:44px; height:44px; font-size:20px; font-weight:800;
+}
+
+/* --- Aviso rápido (toast) ---
+   Mensagem que aparece na tela após uma ação (ex.: resultado enviado).
+   É usada no lugar de "alert" porque alguns navegadores de celular
+   bloqueiam as janelas nativas do tipo alert/confirm. */
+.toast-box{
+  position:fixed; left:0; right:0; bottom:92px; z-index:300;
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+  padding:0 12px; pointer-events:none;
+}
+.toast{
+  background:var(--ok); color:#fff; border-radius:12px; padding:12px 16px;
+  font-size:14px; font-weight:700; max-width:92vw; text-align:center;
+  box-shadow:0 6px 20px rgba(0,0,0,.25);
+}
+.toast.sair{ opacity:0; transform:translateY(8px); transition:opacity .4s, transform .4s; }
+
+/* --- Sincronização (botão de atualizar no topo e status na aba Configurações) --- */
+.btn-topo-icone{
+  background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.35);
+  color:#fff; border-radius:999px; width:38px; height:38px; flex:0 0 auto;
+  display:flex; align-items:center; justify-content:center; font-size:17px; padding:0;
+}
+.btn-topo-icone.girando{ animation:girar 1s linear infinite; }
+@keyframes girar{ from{ transform:rotate(0deg); } to{ transform:rotate(360deg); } }
+.sync-status{ display:none; margin-top:10px; font-size:13px; border-radius:12px; padding:10px 12px; word-break:break-word; }
+.sync-status.ok{ display:block; background:#E9F8EE; border:1px solid #B7E4C7; color:#116138; }
+.sync-status.erro{ display:block; background:#FDECEC; border:1px solid #F5C2C2; color:#96201F; }
+
+/* --- Em telas estreitas, diminui o topo para caber tudo (logo + usuário + 🔄 + sair) --- */
+@media (max-width:430px){
+  .logo{ font-size:15px; gap:6px; }
+  .logo small{ display:none; }
+  .logo .icone{ width:28px; height:28px; font-size:16px; border-radius:8px; }
+  .btn-topo-icone{ width:34px; height:34px; font-size:15px; }
+  .btn-sair{ padding:7px 10px; font-size:12.5px; }
+  .chip-usuario{ max-width:26vw; padding:5px 9px; font-size:12px; }
+}
+
+/* --- Upload --- */
+.caixa-upload{
+  border:2px dashed #BCD3F7; background:var(--azul-claro); border-radius:12px;
+  padding:12px; font-size:13.5px; color:var(--azul-escuro); text-align:center;
+}
+.caixa-upload input{ margin-top:8px; width:100%; font-size:13px; }
+
+/* =======================================================================
+   SEÇÃO 6 - TELA DE LOGIN
+   ======================================================================= */
+.login{
+  min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:22px; background:linear-gradient(160deg,var(--azul-escuro),var(--azul));
+}
+.login .marca{ text-align:center; color:#fff; margin-bottom:22px; }
+.login .marca .icone{
+  width:78px; height:78px; border-radius:24px; background:#fff; color:var(--azul-escuro);
+  display:flex; align-items:center; justify-content:center; font-size:40px; margin:0 auto 12px;
+}
+.login .marca h1{ font-size:24px; margin:0; }
+.login .marca p{ margin:6px 0 0; font-size:14px; opacity:.9; }
+.login .painel{ background:#fff; border-radius:20px; padding:18px; width:100%; max-width:420px; box-shadow:0 10px 30px rgba(0,0,0,.2); }
+
+/* =======================================================================
+   SEÇÃO 7 - AJUSTES PARA TELA GRANDE (PC)
+   ======================================================================= */
+@media (min-width:760px){
+  .conteudo{ padding-bottom:30px; }
+  .nav{
+    position:static; justify-content:center; gap:6px;
+    border-top:none; border-bottom:1px solid var(--borda);
+    padding:8px 12px; box-shadow:0 2px 8px rgba(11,60,140,.05);
+  }
+  .nav button{ flex:0 0 auto; flex-direction:row; gap:8px; padding:10px 16px; font-size:14px; border-radius:12px; }
+  .nav button.ativo{ background:var(--azul-claro); }
+  .nav button .em{ font-size:17px; }
+  .anexo-iframe{ height:380px; }
+  .modal-fundo{ align-items:center; padding:20px; }
+  .modal{ border-radius:20px; }
+}
+</style>
+</head>
+
+<body>
+  <div id="app"></div>
+  <div id="modalRaiz"></div>
+  <div id="lightbox" hidden></div>
+  <div id="toastBox" class="toast-box"></div>
+  <!-- campo invisível usado para importar o backup JSON -->
+  <input type="file" id="inputImportBackup" accept=".json,application/json" style="display:none" />
+
+<script>
+/* =========================================================================
+   SEÇÃO 1 - CONFIGURAÇÕES GERAIS (EDITE AQUI)
+   ========================================================================= */
+const CONFIG_INICIAL = {
+  senhaProfessor: "prof21",   // <-- SENHA PADRÃO DO PROFESSOR (veja aviso abaixo)
+  inicioDesafio: hojeISO(),   // data de início do desafio (formato AAAA-MM-DD)
+  metaAgua: 3,                // meta diária de água em litros
+  totalDias: 21,              // duração do desafio
+  // --- Sincronização (preencha na aba Configurações) ---
+  ghDono: "",                 // seu usuário (ou organização) do GitHub
+  ghRepo: "",                 // nome do repositório público
+  ghCaminho: "dados.json",    // arquivo com o conteúdo dentro do repositório
+  ghBranch: "main"            // ramo (branch) do repositório
+};
+const CHAVE_DADOS = "desafioFunciona21";
+const CHAVE_SESSAO = "desafioFunciona21_sessao";
+const CHAVE_TOKEN_GH = "desafioFunciona21_github_token";     // token do professor (fica só neste aparelho)
+const CHAVE_ULTIMA_SYNC = "desafioFunciona21_ultima_sync";   // data da última sincronização
+const PASSO_AGUA = 0.25;      // cada clique de água soma 250 ml
+
+/* AVISO IMPORTANTE SOBRE A SENHA DO PROFESSOR:
+   Esta senha é apenas uma TRAVA SIMPLES DE NAVEGAÇÃO ("porta de tela"),
+   NÃO É SEGURANÇA REAL. Como tudo roda no navegador e o código é aberto,
+   qualquer pessoa com conhecimento técnico consegue ver/alterar a senha.
+   Use somente para organizar o uso entre alunos e professor. */
+
+/* =========================================================================
+   SEÇÃO 2 - UTILIDADES
+   ========================================================================= */
+function $(id){ return document.getElementById(id); }
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+function esc(s){
+  return String(s == null ? "" : s)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+}
+
+function hojeISO(){
+  const d = new Date();
+  return dataParaISO(d);
+}
+function dataParaISO(d){
+  const a = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,"0");
+  const dia = String(d.getDate()).padStart(2,"0");
+  return a + "-" + m + "-" + dia;
+}
+function isoParaData(iso){
+  const p = String(iso || "").split("-");
+  return new Date(Number(p[0]), Number(p[1])-1, Number(p[2]));
+}
+function formatarData(iso){
+  if(!iso) return "";
+  const p = String(iso).split("-");
+  if(p.length !== 3) return iso;
+  return p[2] + "/" + p[1] + "/" + p[0];
+}
+function formatarDataHora(isoCompleto){
+  if(!isoCompleto) return "";
+  const d = new Date(isoCompleto);
+  const data = String(d.getDate()).padStart(2,"0") + "/" + String(d.getMonth()+1).padStart(2,"0") + "/" + d.getFullYear();
+  const hora = String(d.getHours()).padStart(2,"0") + ":" + String(d.getMinutes()).padStart(2,"0");
+  return data + " às " + hora;
+}
+function somarDias(iso, n){
+  const d = isoParaData(iso);
+  d.setDate(d.getDate() + n);
+  return dataParaISO(d);
+}
+// Converte o número do dia (1..21) na data correspondente
+function dataDoDia(n){
+  return somarDias(estado.config.inicioDesafio, n - 1);
+}
+// Descobre em que dia do desafio estamos hoje (pode ser <1 ou >21)
+function diaDeHoje(){
+  const a = isoParaData(estado.config.inicioDesafio).getTime();
+  const b = isoParaData(hojeISO()).getTime();
+  return Math.round((b - a) / 86400000) + 1;
+}
+function limiteDia(n){ return Math.min(estado.config.totalDias, Math.max(1, n)); }
+
+// Garante que um link colado pelo usuário tenha um endereço completo.
+// Sem isso, links como "www.site.com" (sem "https://") viram um caminho
+// local e o botão "Abrir link"/imagem não funciona.
+function urlExterna(u){
+  const s = String(u || "").trim();
+  if(!s) return "";
+  if(/^[a-z][a-z0-9+.-]*:/i.test(s)) return s;   // já tem esquema (https, http, mailto, tel, data...)
+  return "https://" + s;
+}
+
+function ehYouTube(url){
+  return /youtube\.com|youtu\.be/i.test(String(url || ""));
+}
+// Pega o código (ID) do vídeo em qualquer formato de link do YouTube:
+// youtube.com/watch?v=ID | youtu.be/ID | youtube.com/shorts/ID |
+// youtube.com/live/ID | youtube.com/embed/ID | youtube.com/v/ID
+function idDoYouTube(url){
+  const s = String(url || "").trim();
+  const m = s.match(/(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|v\/|shorts\/|live\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
+  return m ? m[1] : "";
+}
+// Monta o endereço que o app usa para tocar o vídeo dentro da própria tela.
+// Funciona com vídeos públicos, NÃO LISTADOS e com link compartilhado.
+// Também aceita links de PLAYLIST do YouTube.
+function linkYouTubeEmbed(url){
+  const s = String(url || "").trim();
+  const id = idDoYouTube(s);
+  if(id) return "https://www.youtube.com/embed/" + id;
+  const lista = s.match(/[?&]list=([A-Za-z0-9_-]+)/);
+  if(lista) return "https://www.youtube.com/embed/videoseries?list=" + lista[1];
+  return "";
+}
+// Escreve tamanho de arquivo de forma legível (ex.: "12,4 MB")
+function formatarTamanho(bytes){
+  const b = Number(bytes || 0);
+  if(b < 1024) return b + " B";
+  if(b < 1024 * 1024) return (b / 1024).toFixed(1).replace(".", ",") + " KB";
+  return (b / (1024 * 1024)).toFixed(2).replace(".", ",") + " MB";
+}
+
+/* =========================================================================
+   SEÇÃO 3 - ARMAZENAMENTO (localStorage)
+   Todos os textos, checklists, resultados e configurações ficam salvos
+   SOMENTE no navegador deste aparelho.
+   ========================================================================= */
+function salvar(){
+  try{
+    localStorage.setItem(CHAVE_DADOS, JSON.stringify(estado));
+  }catch(e){
+    alert("Não foi possível salvar os dados. O armazenamento do navegador pode estar cheio (arquivos grandes).\n\nDica: prefira colar LINKS (YouTube / Google Drive) em vez de enviar arquivos grandes.");
+  }
+}
+function carregar(){
+  try{
+    const bruto = localStorage.getItem(CHAVE_DADOS);
+    if(!bruto) return null;
+    const obj = JSON.parse(bruto);
+    return obj;
+  }catch(e){
+    return null;
+  }
+}
+function salvarSessao(){
+  try{ localStorage.setItem(CHAVE_SESSAO, JSON.stringify(estado.sessao)); }catch(e){}
+}
+function carregarSessao(){
+  try{ return JSON.parse(localStorage.getItem(CHAVE_SESSAO) || "null"); }catch(e){ return null; }
+}
+
+/* =========================================================================
+   SEÇÃO 4 - ARQUIVOS (IndexedDB)
+   Arquivos enviados (imagens, vídeos, PDFs) são guardados no IndexedDB
+   do navegador. O "caminho" do arquivo (fileId) fica salvo nos dados.
+   O IndexedDB aguenta arquivos grandes (vídeos do celular), mas o backup
+   em JSON fica pesado — para vídeos longos, o ideal continua sendo LINK.
+   ========================================================================= */
+const LIMITES_ARQUIVO = {
+  imagem: 10,    // MB - fotos
+  video: 300,    // MB - vídeos gravados no celular/PC (ex.: MP4)
+  arquivo: 25,   // MB - PDFs, documentos
+  nenhum: 0,
+  link: 0
+};
+function limiteDoTipo(tipo){ return LIMITES_ARQUIVO[tipo] || 0; }
+/* Plano B de armazenamento de arquivos:
+   Alguns navegadores BLOQUEIAM o IndexedDB quando o app é aberto direto do
+   disco (endereço file://). Nesse caso os arquivos pequenos são guardados
+   como texto (base64) dentro do localStorage. Limite do plano B: 4 MB. */
+const CHAVE_FALLBACK = "desafioFunciona21_arquivos_planoB";
+const LIMITE_PLANO_B = 4 * 1024 * 1024;
+function planoBLer(){
+  try{ return JSON.parse(localStorage.getItem(CHAVE_FALLBACK) || "{}"); }catch(e){ return {}; }
+}
+function planoBGravar(obj){
+  try{ localStorage.setItem(CHAVE_FALLBACK, JSON.stringify(obj)); return true; }
+  catch(e){ return false; }
+}
+
+const Files = {
+  db: null,
+  abrir(){
+    if(this.db) return Promise.resolve(this.db);
+    return new Promise(function(res, rej){
+      if(typeof indexedDB === "undefined"){ rej(new Error("IndexedDB indisponível")); return; }
+      const req = indexedDB.open("df21_arquivos", 1);
+      req.onupgradeneeded = function(e){
+        const db = e.target.result;
+        if(!db.objectStoreNames.contains("arquivos")) db.createObjectStore("arquivos");
+      };
+      req.onsuccess = function(e){ Files.db = e.target.result; res(Files.db); };
+      req.onerror = function(){ rej(req.error || new Error("Erro no IndexedDB")); };
+      req.onblocked = function(){ rej(new Error("IndexedDB bloqueado")); };
+    });
+  },
+  async salvar(id, blob){
+    try{
+      const db = await this.abrir();
+      await new Promise(function(res, rej){
+        const tx = db.transaction("arquivos", "readwrite");
+        tx.objectStore("arquivos").put(blob, id);
+        tx.oncomplete = function(){ res(true); };
+        tx.onerror = function(){ rej(tx.error); };
+        tx.onabort = function(){ rej(tx.error); };
+      });
+      return true;
+    }catch(e){
+      // Plano B: guarda em base64 no localStorage (só para arquivos pequenos)
+      const dataUrl = await blobParaBase64(blob);
+      if(dataUrl.length > LIMITE_PLANO_B) throw new Error("sem-espaco");
+      const fb = planoBLer();
+      fb[id] = { dataUrl: dataUrl, tipo: blob.type || "" };
+      if(!planoBGravar(fb)) throw new Error("sem-espaco");
+      return true;
+    }
+  },
+  async pegar(id){
+    try{
+      const db = await this.abrir();
+      const blob = await new Promise(function(res){
+        const tx = db.transaction("arquivos", "readonly");
+        const r = tx.objectStore("arquivos").get(id);
+        r.onsuccess = function(){ res(r.result || null); };
+        r.onerror = function(){ res(null); };
+      });
+      if(blob) return blob;
+    }catch(e){ /* segue para o plano B */ }
+    const fb = planoBLer();
+    if(fb[id] && fb[id].dataUrl){
+      try{ return base64ParaBlob(fb[id].dataUrl); }catch(e){ return null; }
+    }
+    return null;
+  },
+  async apagar(id){
+    try{
+      const db = await this.abrir();
+      await new Promise(function(res){
+        const tx = db.transaction("arquivos", "readwrite");
+        tx.objectStore("arquivos").delete(id);
+        tx.oncomplete = function(){ res(true); };
+        tx.onerror = function(){ res(false); };
+      });
+    }catch(e){}
+    const fb = planoBLer();
+    if(fb[id]){ delete fb[id]; planoBGravar(fb); }
+    return true;
+  },
+  async listar(){
+    const ids = [];
+    try{
+      const db = await this.abrir();
+      const lista = await new Promise(function(res){
+        const tx = db.transaction("arquivos", "readonly");
+        const k = tx.objectStore("arquivos").getAllKeys();
+        k.onsuccess = function(){ res(k.result || []); };
+        k.onerror = function(){ res([]); };
+      });
+      lista.forEach(function(i){ ids.push(i); });
+    }catch(e){}
+    const fb = planoBLer();
+    Object.keys(fb).forEach(function(i){ if(ids.indexOf(i) < 0) ids.push(i); });
+    return ids;
+  },
+  async limpar(){
+    try{
+      const db = await this.abrir();
+      await new Promise(function(res){
+        const tx = db.transaction("arquivos", "readwrite");
+        tx.objectStore("arquivos").clear();
+        tx.oncomplete = function(){ res(true); };
+        tx.onerror = function(){ res(false); };
+      });
+    }catch(e){}
+    try{ localStorage.removeItem(CHAVE_FALLBACK); }catch(e){}
+    return true;
+  }
+};
+
+// Guarda em memória os endereços (blob URLs) já criados, para não recriar sempre
+const cacheUrls = {};
+async function urlDoArquivo(fileId){
+  if(!fileId) return "";
+  if(cacheUrls[fileId]) return cacheUrls[fileId];
+  try{
+    const blob = await Files.pegar(fileId);
+    if(!blob) return "";
+    const url = URL.createObjectURL(blob);
+    cacheUrls[fileId] = url;
+    return url;
+  }catch(e){
+    return "";
+  }
+}
+
+/* =========================================================================
+   SEÇÃO 5 - DADOS DE EXEMPLO (aparecem na primeira vez que o app abre)
+   ========================================================================= */
+function dadosIniciais(){
+  return {
+    config: JSON.parse(JSON.stringify(CONFIG_INICIAL)),
+    noticias: [
+      {
+        id: uid(),
+        titulo: "Bem-vindo ao Desafio Funciona 21!",
+        data: hojeISO(),
+        texto: "Começamos hoje o nosso desafio de 21 dias!\n\nMarque todos os dias o que você cumpriu na aba \"Desafio Diário\" e toque em \"Enviar resultado do dia\". Bons treinos!",
+        imgUrl: "",
+        link: ""
+      }
+    ],
+    treinos: [
+      {
+        id: uid(),
+        titulo: "Treino Full Body - Dia 1",
+        descricao: "Aquecimento 5 min + 4 voltas:\n• 12 agachamentos\n• 10 flexões (pode ser de joelhos)\n• 15 abdominais\n• 30 segundos de prancha\n\nDescanso de 60 segundos entre as voltas.",
+        categoria: "Dia 1 - Funcional",
+        anexo: { tipo:"link", url:"https://www.youtube.com/watch?v=ml6cT4AZdqI", fileId:"", nome:"" }
+      }
+    ],
+    nutricao: [
+      {
+        id: uid(),
+        titulo: "Hidratação e café da manhã",
+        descricao: "Beba um copo de água ao acordar.\n\nCafé da manhã sugerido: ovos mexidos + 1 fruta + café sem açúcar.\n\nEvite refrigerantes durante os 21 dias.",
+        categoria: "Dica do dia",
+        anexo: { tipo:"nenhum", url:"", fileId:"", nome:"" }
+      }
+    ],
+    desafios: {
+      "1": {
+        agua: CONFIG_INICIAL.metaAgua,
+        fisicos: [
+          { id: uid(), texto: "20 agachamentos", treinoId: "", link: "" },
+          { id: uid(), texto: "1 minuto de prancha (pode dividir em 3x20s)", treinoId: "", link: "" }
+        ],
+        treinosDia: [
+          { id: uid(), texto: "Treino Full Body - Dia 1", treinoId: "", link: "" }
+        ],
+        alimentares: [
+          { id: uid(), texto: "Beber 3 litros de água no dia", treinoId: "", link: "" },
+          { id: uid(), texto: "Nenhum refrigerante", treinoId: "", link: "" },
+          { id: uid(), texto: "Comer 2 porções de frutas", treinoId: "", link: "" }
+        ]
+      }
+    },
+    resultados: {},   // resultados["Nome do Aluno"]["1"] = { itens:{}, agua:0, enviado:true, enviadoEm:"" }
+    sessao: null,
+    ui: { aba:"noticias", subAba:"fisicos", dia: diaInicial() }
+  };
+}
+function diaInicial(){
+  return Math.min(21, Math.max(1, 1));
+}
+
+/* =========================================================================
+   SEÇÃO 6 - ESTADO DA APLICAÇÃO
+   ========================================================================= */
+let estado = carregar() || dadosIniciais();
+
+// Garante que campos novos existam (caso o backup venha de uma versão antiga)
+function normalizar(){
+  const base = dadosIniciais();
+  estado.config = Object.assign({}, base.config, estado.config || {});
+  estado.noticias = estado.noticias || [];
+  estado.treinos = estado.treinos || [];
+  estado.nutricao = estado.nutricao || [];
+  estado.desafios = estado.desafios || {};
+  estado.resultados = estado.resultados || {};
+  estado.ui = Object.assign({}, base.ui, estado.ui || {});
+  // sessão: restaura do armazenamento (para não pedir login toda hora)
+  if(!estado.sessao){
+    const s = carregarSessao();
+    if(s && s.tipo) estado.sessao = s;
+  }
+}
+
+/* =========================================================================
+   SEÇÃO 7 - REGRAS DE PERFIL
+   ========================================================================= */
+function ehProfessor(){ return estado.sessao && estado.sessao.tipo === "professor"; }
+function ehAluno(){ return estado.sessao && estado.sessao.tipo === "aluno"; }
+function nomeAluno(){ return estado.sessao ? estado.sessao.nome : ""; }
+
+// Retorna o registro de resultado do aluno atual no dia informado (cria vazio se não existir)
+function registroAluno(dia, criar){
+  if(!ehAluno()) return null;
+  const nome = nomeAluno();
+  if(!estado.resultados[nome]){ if(!criar) return null; estado.resultados[nome] = {}; }
+  if(!estado.resultados[nome][dia]){ if(!criar) return null; estado.resultados[nome][dia] = { itens:{}, agua:0, enviado:false, enviadoEm:"" }; }
+  return estado.resultados[nome][dia];
+}
+
+// Itens de uma seção em um dia. dia = número 1..21, secao = fisicos|treinosDia|alimentares
+function itensDaSecao(dia, secao){
+  const d = estado.desafios[String(dia)];
+  if(!d || !d[secao]) return [];
+  return d[secao];
+}
+function metaAguaDoDia(dia){
+  const d = estado.desafios[String(dia)];
+  if(d && typeof d.agua === "number" && d.agua > 0) return d.agua;
+  return Number(estado.config.metaAgua) || 3;
+}
+function garantirDia(dia){
+  const k = String(dia);
+  if(!estado.desafios[k]) estado.desafios[k] = { agua: Number(estado.config.metaAgua) || 3, fisicos:[], treinosDia:[], alimentares:[] };
+  const d = estado.desafios[k];
+  d.fisicos = d.fisicos || [];
+  d.treinosDia = d.treinosDia || [];
+  d.alimentares = d.alimentares || [];
+  return d;
+}
+
+/* =========================================================================
+   SEÇÃO 8 - RENDERIZAÇÃO GERAL (monta a tela atual)
+   ========================================================================= */
+const ABAS = [
+  { id:"noticias", em:"📰", nome:"Notícias"   },
+  { id:"treinos",  em:"🏋️", nome:"Treinos"    },
+  { id:"nutricao", em:"🥗", nome:"Nutrição"   },
+  { id:"diario",   em:"✅", nome:"Desafio"    },
+  { id:"resultados", em:"📊", nome:"Resultados", somenteProf:true },
+  { id:"config",   em:"⚙️", nome:"Config.", somenteProf:true }
+];
+
+async function render(){
+  const app = $("app");
+
+  if(!estado.sessao){ app.innerHTML = telaLogin(); return; }
+
+  const abas = ABAS.filter(function(a){ return !a.somenteProf || ehProfessor(); });
+  if(!abas.some(function(a){ return a.id === estado.ui.aba; })) estado.ui.aba = "noticias";
+
+  let corpo = "";
+  if(estado.ui.aba === "noticias")   corpo = await telaNoticias();
+  if(estado.ui.aba === "treinos")    corpo = await telaBiblioteca("treinos");
+  if(estado.ui.aba === "nutricao")   corpo = await telaBiblioteca("nutricao");
+  if(estado.ui.aba === "diario")     corpo = await telaDiario();
+  if(estado.ui.aba === "resultados") corpo = await telaResultados();
+  if(estado.ui.aba === "config")     corpo = await telaConfig();
+
+  app.innerHTML =
+    barraTopo() +
+    '<nav class="nav">' + abas.map(function(a){
+      return '<button data-acao="ir" data-aba="' + a.id + '" class="' + (estado.ui.aba === a.id ? "ativo" : "") + '">' +
+             '<span class="em">' + a.em + '</span><span>' + a.nome + '</span></button>';
+    }).join("") + '</nav>' +
+    '<main class="conteudo">' + corpo + '</main>';
+}
+
+function barraTopo(){
+  const perfil = ehProfessor() ? "Professor" : "Aluno";
+  const nome = estado.sessao.nome;
+  return '<header class="topbar">' +
+    '<div class="logo"><span class="icone">💪</span><div>Desafio Funciona 21<small>21 dias de disciplina</small></div></div>' +
+    '<div class="espaco"></div>' +
+    '<span class="chip-usuario">' + (ehProfessor() ? "👨‍🏫" : "🙋") + ' ' + esc(nome) + '</span>' +
+    '<button class="btn-topo-icone" data-acao="atualizarConteudo" title="Baixar o conteúdo mais recente do professor" aria-label="Atualizar conteúdo">🔄</button>' +
+    '<button class="btn-sair" data-acao="sair">Sair</button>' +
+  '</header>';
+}
+
+/* =========================================================================
+   SEÇÃO 9 - TELA DE LOGIN
+   ========================================================================= */
+function telaLogin(){
+  return '' +
+  '<div class="login">' +
+    '<div class="marca">' +
+      '<div class="icone">💪</div>' +
+      '<h1>Desafio Funciona 21</h1>' +
+      '<p>21 dias para mudar sua rotina</p>' +
+    '</div>' +
+    '<div class="painel">' +
+      '<h3 style="margin:0 0 4px;font-size:17px;">Entrar no aplicativo</h3>' +
+      '<p class="ajuda" style="margin-bottom:12px;">Escolha como você quer entrar.</p>' +
+
+      '<label class="rotulo">🙋 Sou Aluno - Digite seu nome</label>' +
+      '<input class="campo" id="entradaNomeAluno" placeholder="Ex.: Maria Silva" />' +
+      '<button class="btn btn-pri btn-bloco" style="margin-top:10px;" data-acao="entrarAluno">Entrar como Aluno</button>' +
+
+      '<div style="height:1px;background:var(--borda);margin:18px 0 14px;"></div>' +
+
+      '<label class="rotulo">👨‍🏫 Sou Professor - Senha</label>' +
+      '<input class="campo" id="entradaSenha" type="password" placeholder="Senha do professor" />' +
+      '<button class="btn btn-sec btn-bloco" style="margin-top:10px;" data-acao="entrarProfessor">Entrar como Professor</button>' +
+
+      '<p class="ajuda" style="margin-top:14px;">Senha inicial: <b>prof21</b> (pode ser alterada em Configurações).<br>' +
+      'Atenção: esta senha é apenas uma trava simples, sem segurança real.</p>' +
+    '</div>' +
+  '</div>';
+}
+
+/* =========================================================================
+   SEÇÃO 10 - ABA NOTÍCIAS
+   ========================================================================= */
+async function telaNoticias(){
+  const lista = estado.noticias.slice().sort(function(a,b){
+    return String(b.data || "").localeCompare(String(a.data || ""));
+  });
+
+  let html = '<h1 class="titulo-tela">📰 Notícias</h1><p class="sub">Avisos e novidades do desafio (mais recentes primeiro).</p>';
+
+  if(ehProfessor()){
+    html += '<button class="btn btn-pri btn-bloco" data-acao="novaNoticia">➕ Nova notícia</button>';
+  }
+
+  if(lista.length === 0){
+    html += '<div class="vazio" style="margin-top:12px;">Nenhuma notícia publicada ainda.</div>';
+  }
+
+  for(const n of lista){
+    let urlImg = n.imgUrl || "";
+    if(n.imgFileId) urlImg = await urlDoArquivo(n.imgFileId);
+    let img = "";
+    if(urlImg){
+      if(n.imgFileId){
+        img = '<img class="anexo-img" src="' + esc(urlImg) + '" alt="Imagem da notícia" data-acao="ampliarImg" data-url="' + esc(urlImg) + '">';
+      }else{
+        const linkImg = urlExterna(urlImg);
+        img = '<img class="anexo-img" src="' + esc(linkImg) + '" alt="Imagem da notícia" data-acao="ampliarImg" data-url="' + esc(linkImg) + '"' +
+                ' onerror="this.style.display=&quot;none&quot;;this.nextElementSibling.style.display=&quot;block&quot;;">' +
+              '<p class="ajuda" style="display:none;">⚠️ A imagem não carregou. Confirme se o link é o endereço DIRETO da imagem (.jpg, .png...). ' +
+                '<a href="' + esc(linkImg) + '" target="_blank" rel="noopener">Abrir em outra aba</a></p>';
+      }
+    }
+    let link = "";
+    if(n.link){
+      link = '<a class="btn btn-sec btn-pequeno" style="margin-top:10px;text-decoration:none;" href="' + esc(urlExterna(n.link)) + '" target="_blank" rel="noopener">🔗 Abrir link</a>';
+    }
+    let acoes = "";
+    if(ehProfessor()){
+      acoes = '<div class="card-acoes">' +
+        '<button class="btn btn-sec btn-pequeno" data-acao="editarNoticia" data-id="' + n.id + '">✏️ Editar</button>' +
+        '<button class="btn btn-erro btn-pequeno" data-acao="excluirNoticia" data-id="' + n.id + '">🗑️ Excluir</button>' +
+      '</div>';
+    }
+    html += '<div class="card">' +
+      '<h3>' + esc(n.titulo) + '</h3>' +
+      '<div class="data">🗓️ ' + esc(formatarData(n.data)) + '</div>' +
+      '<div class="texto">' + esc(n.texto) + '</div>' + img + link + acoes +
+    '</div>';
+  }
+  return html;
+}
+
+function abrirModalNoticia(id){
+  const n = id ? estado.noticias.find(function(x){ return x.id === id; }) : null;
+  const corpo =
+    '<label class="rotulo">Título</label>' +
+    '<input class="campo" id="ntTitulo" value="' + esc(n ? n.titulo : "") + '" placeholder="Título da notícia" />' +
+    '<label class="rotulo">Data</label>' +
+    '<input class="campo" id="ntData" type="date" value="' + esc(n ? n.data : hojeISO()) + '" />' +
+    '<label class="rotulo">Texto</label>' +
+    '<textarea class="campo" id="ntTexto" placeholder="Escreva a notícia...">' + esc(n ? n.texto : "") + '</textarea>' +
+    '<label class="rotulo">Imagem da notícia</label>' +
+    '<input class="campo" id="ntImg" value="' + esc(n ? n.imgUrl : "") + '" placeholder="Ou cole um link de imagem: https://..." />' +
+    '<div class="caixa-upload" style="margin-top:8px;">' +
+      'OU envie uma foto do aparelho (até ' + LIMITES_ARQUIVO.imagem + ' MB).<br>' +
+      '<input type="file" id="ntArquivo" accept="image/*" data-acao="escolherArquivo" />' +
+      '<div id="ntPreview"></div>' +
+      '<div style="margin-top:6px;">Imagem atual: <b>' + esc(n && n.imgFileId ? "arquivo enviado" : (n && n.imgUrl ? "link" : "nenhuma")) + '</b></div>' +
+    '</div>' +
+    '<label class="rotulo">Link externo (opcional)</label>' +
+    '<input class="campo" id="ntLink" value="' + esc(n ? n.link : "") + '" placeholder="https://..." />' +
+    '<p class="ajuda" id="ntDicaVideo">Dica: para vídeos, use a aba Treinos ou Nutrição (aceita vídeo do aparelho e link do YouTube).</p>';
+
+  abrirModal(n ? "Editar notícia" : "Nova notícia", corpo, async function(){
+    const titulo = $("ntTitulo").value.trim();
+    if(!titulo){ alert("Digite o título da notícia."); return false; }
+
+    let imgFileId = (n && n.imgFileId) ? n.imgFileId : "";
+    let imgUrl = $("ntImg").value.trim();
+
+    const campoArq = $("ntArquivo");
+    const arquivo = campoArq && campoArq.files && campoArq.files[0] ? campoArq.files[0] : null;
+    if(arquivo){
+      if(!/^image\//i.test(arquivo.type)){ alert("Escolha um arquivo de imagem (JPG, PNG...)."); return false; }
+      if(arquivo.size > LIMITES_ARQUIVO.imagem * 1024 * 1024){
+        alert("A imagem tem " + formatarTamanho(arquivo.size) + " e passa do limite de " + LIMITES_ARQUIVO.imagem + " MB.\n\nEscolha uma imagem menor ou cole um LINK.");
+        return false;
+      }
+      const novoId = uid();
+      try{
+        await Files.salvar(novoId, arquivo);
+        if(imgFileId) await Files.apagar(imgFileId);
+        imgFileId = novoId;
+        imgUrl = "";
+      }catch(e){
+        alert("Não foi possível salvar a imagem no navegador.");
+        return false;
+      }
+    }
+
+    const dados = {
+      titulo: titulo,
+      data: $("ntData").value || hojeISO(),
+      texto: $("ntTexto").value,
+      imgUrl: imgUrl,
+      imgFileId: imgFileId,
+      link: $("ntLink").value.trim()
+    };
+    if(n){ Object.assign(n, dados); }
+    else { estado.noticias.push(Object.assign({ id: uid() }, dados)); }
+    salvar();
+    return true;
+  });
+
+  atualizarPreviewSimples("ntArquivo", "ntPreview");
+}
+
+// Pré-visualização simples para o campo de imagem da notícia
+function atualizarPreviewSimples(idCampo, idBox){
+  const campo = $(idCampo);
+  const box = $(idBox);
+  if(!campo || !box) return;
+  const f = campo.files && campo.files[0];
+  if(!f){ box.innerHTML = ""; return; }
+  const url = URL.createObjectURL(f);
+  urlsPreview.push(url);
+  box.innerHTML = '<div style="margin-top:8px;text-align:left;">📎 <b>' + esc(f.name) + '</b> (' + formatarTamanho(f.size) + ')</div>' +
+    (/^image\//i.test(f.type) ? '<img class="anexo-img" src="' + url + '" alt="Pré-visualização">' : '');
+}
+
+/* =========================================================================
+   SEÇÃO 11 - ABAS TREINOS E NUTRIÇÃO (mesma estrutura)
+   ========================================================================= */
+async function telaBiblioteca(aba){
+  const lista = estado[aba] || [];
+  const titulo = aba === "treinos" ? "🏋️ Treinos" : "🥗 Nutrição";
+  const desc = aba === "treinos"
+    ? "Biblioteca de treinos: vídeos, imagens, PDFs e links."
+    : "Conteúdos de nutrição: dicas, planos, imagens, PDFs e links.";
+
+  let html = '<h1 class="titulo-tela">' + titulo + '</h1><p class="sub">' + desc + '</p>';
+
+  if(ehProfessor()){
+    html += '<button class="btn btn-pri btn-bloco" data-acao="novoConteudo" data-aba="' + aba + '">➕ Adicionar conteúdo</button>';
+  }
+  if(lista.length === 0){
+    html += '<div class="vazio" style="margin-top:12px;">Nenhum conteúdo cadastrado ainda.</div>';
+  }
+
+  for(const item of lista){
+    let anexoHtml = await htmlAnexo(item.anexo);
+    let acoes = "";
+    if(ehProfessor()){
+      acoes = '<div class="card-acoes">' +
+        '<button class="btn btn-sec btn-pequeno" data-acao="editarConteudo" data-aba="' + aba + '" data-id="' + item.id + '">✏️ Editar</button>' +
+        '<button class="btn btn-erro btn-pequeno" data-acao="excluirConteudo" data-aba="' + aba + '" data-id="' + item.id + '">🗑️ Excluir</button>' +
+      '</div>';
+    }
+    html += '<div class="card">' +
+      (item.categoria ? '<span class="badge badge-ok">' + esc(item.categoria) + '</span><div style="height:6px"></div>' : '') +
+      '<h3>' + esc(item.titulo) + '</h3>' +
+      '<div class="texto">' + esc(item.descricao) + '</div>' +
+      anexoHtml + acoes +
+    '</div>';
+  }
+  return html;
+}
+
+// Monta o HTML do anexo de acordo com o tipo (imagem, vídeo, arquivo ou link)
+async function htmlAnexo(anexo){
+  if(!anexo || anexo.tipo === "nenhum") return "";
+  let url = anexo.url || "";
+  if(anexo.fileId) url = await urlDoArquivo(anexo.fileId);
+  if(!url) return '<p class="ajuda">Anexo não encontrado (o arquivo pode ter sido apagado).</p>';
+
+  if(anexo.tipo === "imagem"){
+    // Arquivo enviado do aparelho: endereço interno, sempre funciona.
+    if(anexo.fileId){
+      return '<img class="anexo-img" src="' + esc(url) + '" alt="Imagem do conteúdo" data-acao="ampliarImg" data-url="' + esc(url) + '">';
+    }
+    // Link de imagem: garante "https://" e, se a imagem não carregar, troca
+    // por um aviso com opção de abrir em outra aba (em vez de simplesmente sumir).
+    const linkImg = urlExterna(anexo.url);
+    return '<img class="anexo-img" src="' + esc(linkImg) + '" alt="Imagem do conteúdo" data-acao="ampliarImg" data-url="' + esc(linkImg) + '"' +
+             ' onerror="this.style.display=&quot;none&quot;;this.nextElementSibling.style.display=&quot;block&quot;;">' +
+           '<p class="ajuda" style="display:none;">⚠️ A imagem não carregou. Confirme se o link é o endereço DIRETO da imagem ' +
+             '(termina em .jpg, .png, .webp...) e não a página onde ela aparece. ' +
+             '<a href="' + esc(linkImg) + '" target="_blank" rel="noopener">Abrir em outra aba</a></p>';
+  }
+  if(anexo.tipo === "video"){
+    if(ehYouTube(url)) return blocoYouTube(url);
+    const ehArquivo = !!anexo.fileId;
+    const urlFinal = ehArquivo ? url : urlExterna(anexo.url);
+    const ehArquivoDireto = ehArquivo || /\.(mp4|webm|ogv|ogg|mov|m4v|3gp)(\?.*)?$/i.test(urlFinal);
+    if(!ehArquivoDireto){
+      return '<a class="btn btn-sec" style="margin-top:10px;text-decoration:none;" href="' + esc(urlFinal) + '" target="_blank" rel="noopener">📥 Abrir vídeo</a>';
+    }
+    return '<video class="anexo-video" controls playsinline preload="metadata" src="' + esc(urlFinal) + '"></video>' +
+           (ehArquivo
+             ? '<p class="ajuda">Se o vídeo não tocar, o formato pode não ser compatível com este navegador (prefira MP4).</p>'
+             : '') +
+           '<a class="btn btn-sec btn-pequeno" style="margin-top:8px;text-decoration:none;" href="' + esc(urlFinal) + '" target="_blank" rel="noopener">📥 Abrir vídeo em outra aba</a>';
+  }
+  if(anexo.tipo === "arquivo"){
+    const urlFinal = anexo.fileId ? url : urlExterna(anexo.url);
+    return '<a class="btn btn-sec" style="margin-top:10px;text-decoration:none;" href="' + esc(urlFinal) + '" download="' + esc(anexo.nome || "arquivo") + '" target="_blank" rel="noopener">📄 Abrir / baixar: ' + esc(anexo.nome || "arquivo") + '</a>';
+  }
+  if(anexo.tipo === "link"){
+    const urlFinal = urlExterna(anexo.url || url);
+    if(ehYouTube(urlFinal)) return blocoYouTube(urlFinal);
+    return '<a class="btn btn-sec" style="margin-top:10px;text-decoration:none;" href="' + esc(urlFinal) + '" target="_blank" rel="noopener">🔗 Abrir link</a>';
+  }
+  return "";
+}
+
+// Bloco de vídeo do YouTube.
+// O player embutido só funciona quando o app está em um endereço http/https.
+// Aberto direto do disco (endereço file://), o YouTube recusa o player e mostra
+// "Erro de configuração do player de vídeo". Por isso mostramos sempre uma CAPA
+// clicável que abre o vídeo no YouTube, e só usamos o player embutido quando o
+// app está publicado (http/https).
+function blocoYouTube(url){
+  const urlCerta = urlExterna(url);
+  const id = idDoYouTube(urlCerta);
+  const embed = linkYouTubeEmbed(urlCerta);
+  const abrirNoYoutube = '<a class="btn btn-sec btn-pequeno" style="margin-top:4px;text-decoration:none;" href="' + esc(urlCerta) + '" target="_blank" rel="noopener">▶️ Abrir no YouTube</a>';
+
+  if(!embed){
+    return '<a class="btn btn-sec" style="margin-top:10px;text-decoration:none;" href="' + esc(urlCerta) + '" target="_blank" rel="noopener">🔗 Abrir link</a>';
+  }
+
+  const podeTocarAqui = (location.protocol === "http:" || location.protocol === "https:");
+
+  let html = "";
+  if(id){
+    html += '<a class="video-capa" href="' + esc(urlCerta) + '" target="_blank" rel="noopener" title="Assistir no YouTube">' +
+              '<img src="https://img.youtube.com/vi/' + esc(id) + '/hqdefault.jpg" alt="Capa do vídeo" loading="lazy">' +
+              '<span class="video-play">▶</span>' +
+            '</a>';
+  }
+  if(podeTocarAqui){
+    const embedFinal = embed + (embed.indexOf("?") >= 0 ? "&" : "?") + "rel=0";
+    html += '<iframe class="anexo-iframe" src="' + esc(embedFinal) + '" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>';
+  }
+  html += '<p class="ajuda">' + (podeTocarAqui
+      ? 'Toque na capa para assistir no YouTube (o dono pode ter bloqueado a reprodução aqui dentro).'
+      : 'Toque na capa para assistir no YouTube. Para tocar dentro do app, o app precisa estar publicado em um endereço http/https.') +
+    '</p>' + abrirNoYoutube;
+  return html;
+}
+
+function abrirModalConteudo(aba, id){
+  const item = id ? (estado[aba] || []).find(function(x){ return x.id === id; }) : null;
+  const an = (item && item.anexo) ? item.anexo : { tipo:"nenhum", url:"", fileId:"", nome:"" };
+
+  const nomeAtual = an.fileId ? (an.nome || "arquivo enviado") : "nenhum";
+
+  const corpo =
+    '<label class="rotulo">Título</label>' +
+    '<input class="campo" id="ctTitulo" value="' + esc(item ? item.titulo : "") + '" placeholder="Título do conteúdo" />' +
+    '<label class="rotulo">Categoria / Dia (opcional)</label>' +
+    '<input class="campo" id="ctCategoria" value="' + esc(item ? item.categoria : "") + '" placeholder="Ex.: Dia 3 - Cardio" />' +
+    '<label class="rotulo">Descrição</label>' +
+    '<textarea class="campo" id="ctDescricao" placeholder="Explique o treino, séries, repetições...">' + esc(item ? item.descricao : "") + '</textarea>' +
+
+    '<label class="rotulo">Tipo de anexo</label>' +
+    '<select class="campo" id="ctTipo" data-acao="mudarTipoAnexo">' +
+      '<option value="nenhum"'   + (an.tipo === "nenhum" ? " selected" : "") + '>Sem anexo</option>' +
+      '<option value="imagem"'   + (an.tipo === "imagem" ? " selected" : "") + '>🖼️ Imagem (foto)</option>' +
+      '<option value="video"'    + (an.tipo === "video" ? " selected" : "") + '>🎬 Vídeo (arquivo do aparelho ou link do YouTube)</option>' +
+      '<option value="arquivo"'  + (an.tipo === "arquivo" ? " selected" : "") + '>📄 Arquivo (PDF, etc.)</option>' +
+      '<option value="link"'     + (an.tipo === "link" ? " selected" : "") + '>🔗 Link externo</option>' +
+    '</select>' +
+
+    '<div id="ctBlocoUrl">' +
+      '<label class="rotulo" id="ctRotuloUrl">Link (URL)</label>' +
+      '<input class="campo" id="ctUrl" value="' + esc(an.url || "") + '" placeholder="https://..." />' +
+      '<p class="ajuda" id="ctAjudaUrl"></p>' +
+    '</div>' +
+
+    '<div id="ctBlocoArquivo">' +
+      '<label class="rotulo" id="ctRotuloArquivo">OU enviar arquivo do aparelho</label>' +
+      '<div class="caixa-upload">' +
+        '<div id="ctInfoLimite"></div>' +
+        '<input type="file" id="ctArquivo" data-acao="escolherArquivo" />' +
+        '<div id="ctPreview"></div>' +
+        '<div style="margin-top:6px;">Arquivo atual: <b>' + esc(nomeAtual) + '</b></div>' +
+      '</div>' +
+      '<p class="ajuda">Escolher um novo arquivo substitui o anterior (o antigo é apagado).</p>' +
+    '</div>';
+
+  abrirModal(item ? "Editar conteúdo" : "Adicionar conteúdo", corpo, async function(){
+    const titulo = $("ctTitulo").value.trim();
+    if(!titulo){ alert("Digite o título."); return false; }
+
+    const tipo = $("ctTipo").value;
+    const url = $("ctUrl").value.trim();
+    const campoArq = $("ctArquivo");
+    const arquivo = campoArq && campoArq.files && campoArq.files[0] ? campoArq.files[0] : null;
+
+    if(tipo !== "nenhum" && !url && !arquivo && !(an.fileId && tipo === an.tipo)){
+      alert("Escolha um arquivo do aparelho ou cole um LINK para este anexo.");
+      return false;
+    }
+
+    let fileId = an.fileId || "";
+    let nomeArquivo = an.nome || "";
+
+    if(arquivo){
+      const limiteMB = /^video\//i.test(arquivo.type) ? LIMITES_ARQUIVO.video : limiteDoTipo(tipo);
+      if(limiteMB > 0 && arquivo.size > limiteMB * 1024 * 1024){
+        alert("Este arquivo tem " + formatarTamanho(arquivo.size) + " e passa do limite de " + limiteMB + " MB.\n\n" +
+              "Escolha um arquivo menor ou cole um LINK (YouTube / Google Drive).");
+        return false;
+      }
+      const novoId = uid();
+      try{
+        await Files.salvar(novoId, arquivo);
+        if(fileId) await Files.apagar(fileId);   // remove o arquivo antigo para não acumular
+        fileId = novoId;
+        nomeArquivo = arquivo.name;
+      }catch(e){
+        alert("Não foi possível salvar o arquivo (" + formatarTamanho(arquivo.size) + ") no navegador.\n\n" +
+              "Pode ser falta de espaço. Tente um arquivo menor ou use um LINK externo.");
+        return false;
+      }
+    }
+
+    if(tipo === "nenhum"){
+      if(fileId) await Files.apagar(fileId);
+      fileId = ""; nomeArquivo = "";
+    }
+
+    const dados = {
+      titulo: titulo,
+      categoria: $("ctCategoria").value.trim(),
+      descricao: $("ctDescricao").value,
+      anexo: { tipo: tipo, url: (tipo === "nenhum" ? "" : url), fileId: fileId, nome: nomeArquivo }
+    };
+
+    if(item){ Object.assign(item, dados); }
+    else { estado[aba].push(Object.assign({ id: uid() }, dados)); }
+
+    salvar();
+    return true;
+  });
+
+  atualizarCamposAnexo();
+}
+
+// Mostra/esconde os campos conforme o tipo escolhido e explica os limites
+function atualizarCamposAnexo(){
+  const sel = $("ctTipo");
+  if(!sel) return;
+  const tipo = sel.value;
+  const bUrl = $("ctBlocoUrl");
+  const bArq = $("ctBlocoArquivo");
+  if(!bUrl || !bArq) return;
+
+  const temArquivo = (tipo === "imagem" || tipo === "video" || tipo === "arquivo");
+  bUrl.style.display = (tipo === "nenhum") ? "none" : "block";
+  bArq.style.display = temArquivo ? "block" : "none";
+
+  const campo = $("ctArquivo");
+  if(campo){
+    if(tipo === "imagem") campo.setAttribute("accept", "image/*");
+    else if(tipo === "video") campo.setAttribute("accept", "video/*");
+    else if(tipo === "arquivo") campo.setAttribute("accept", ".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt");
+    else campo.removeAttribute("accept");
+  }
+
+  const rotuloUrl = $("ctRotuloUrl");
+  const ajudaUrl = $("ctAjudaUrl");
+  if(tipo === "video"){
+    if(rotuloUrl) rotuloUrl.textContent = "Link do vídeo (YouTube, Google Drive, etc.) - opcional";
+    if(ajudaUrl) ajudaUrl.textContent = "Cole o link de vídeos públicos, NÃO LISTADOS ou com link compartilhado (youtube.com/watch?v=... , youtu.be/... ou /shorts/...). O vídeo toca dentro do app.";
+  }else if(tipo === "imagem"){
+    if(rotuloUrl) rotuloUrl.textContent = "Link da imagem (opcional)";
+    if(ajudaUrl) ajudaUrl.textContent = "Você pode colar o endereço de uma imagem da internet em vez de enviar arquivo.";
+  }else if(tipo === "arquivo"){
+    if(rotuloUrl) rotuloUrl.textContent = "Link do arquivo (opcional)";
+    if(ajudaUrl) ajudaUrl.textContent = "Ex.: link do Google Drive ou Dropbox. Lembre-se de deixar o link liberado para quem for abrir.";
+  }else if(tipo === "link"){
+    if(rotuloUrl) rotuloUrl.textContent = "Link externo";
+    if(ajudaUrl) ajudaUrl.textContent = "Links do YouTube são incorporados automaticamente (vídeo público, não listado ou compartilhado).";
+  }
+
+  const info = $("ctInfoLimite");
+  const rotuloArq = $("ctRotuloArquivo");
+  if(info){
+    if(tipo === "video"){
+      info.innerHTML = 'Envie um vídeo gravado no celular/PC (recomendado: <b>MP4</b>).<br>Limite: até <b>' + LIMITES_ARQUIVO.video + ' MB</b> por vídeo.';
+      if(rotuloArq) rotuloArq.textContent = "OU enviar vídeo do aparelho";
+    }else if(tipo === "imagem"){
+      info.innerHTML = 'Fotos em JPG/PNG/WebP. Limite: até <b>' + LIMITES_ARQUIVO.imagem + ' MB</b> por imagem.';
+      if(rotuloArq) rotuloArq.textContent = "OU enviar imagem do aparelho";
+    }else if(tipo === "arquivo"){
+      info.innerHTML = 'PDF e documentos. Limite: até <b>' + LIMITES_ARQUIVO.arquivo + ' MB</b> por arquivo.';
+      if(rotuloArq) rotuloArq.textContent = "OU enviar arquivo do aparelho";
+    }
+  }
+}
+
+// Pré-visualiza o arquivo escolhido antes de salvar
+const urlsPreview = [];
+function mostrarPreviewArquivo(){
+  const campo = $("ctArquivo");
+  const box = $("ctPreview");
+  if(!campo || !box) return;
+
+  while(urlsPreview.length){ URL.revokeObjectURL(urlsPreview.pop()); }
+
+  const f = campo.files && campo.files[0];
+  if(!f){ box.innerHTML = ""; return; }
+
+  // Ajusta o tipo de anexo automaticamente conforme o arquivo escolhido
+  const tipoAtual = $("ctTipo").value;
+  if(tipoAtual === "nenhum" || tipoAtual === "link"){
+    if(/^video\//i.test(f.type)) $("ctTipo").value = "video";
+    else if(/^image\//i.test(f.type)) $("ctTipo").value = "imagem";
+    else $("ctTipo").value = "arquivo";
+    atualizarCamposAnexo();
+  }
+
+  const tipo = $("ctTipo").value;
+  const limiteMB = /^video\//i.test(f.type) ? LIMITES_ARQUIVO.video : limiteDoTipo(tipo);
+  const passou = limiteMB > 0 && f.size > limiteMB * 1024 * 1024;
+
+  let html = '<div style="margin-top:10px;text-align:left;">📎 <b>' + esc(f.name) + '</b> (' + formatarTamanho(f.size) + ')' +
+    (passou ? ' <span style="color:#DC2626;font-weight:800;">- acima do limite de ' + limiteMB + ' MB</span>' : ' <span style="color:#16A34A;font-weight:800;">- ok</span>') +
+  '</div>';
+
+  const url = URL.createObjectURL(f);
+  urlsPreview.push(url);
+  if(/^image\//i.test(f.type)) html += '<img class="anexo-img" src="' + url + '" alt="Pré-visualização da imagem">';
+  if(/^video\//i.test(f.type)) html += '<video class="anexo-video" controls muted playsinline src="' + url + '"></video>';
+
+  box.innerHTML = html;
+}
+
+/* =========================================================================
+   SEÇÃO 12 - ABA DESAFIO DIÁRIO
+   ========================================================================= */
+const SECOES = [
+  { id:"fisicos",     nome:"Desafios Físicos",     em:"🤸" },
+  { id:"treinosDia",  nome:"Treinos do dia",       em:"🏋️" },
+  { id:"alimentares", nome:"Desafios Alimentares", em:"🍎" },
+  { id:"agua",        nome:"Meta de Água",         em:"💧" }
+];
+
+async function telaDiario(){
+  const dia = limiteDia(estado.ui.dia);
+  estado.ui.dia = dia;
+  const hoje = diaDeHoje();
+  const dataTxt = formatarData(dataDoDia(dia));
+
+  let html = '<h1 class="titulo-tela">✅ Desafio Diário</h1>' +
+    '<p class="sub">Marque o que você cumpriu hoje e envie seu resultado.</p>';
+
+  // ---- Navegação por dia ----
+  html += '<div class="seletor-dia">' +
+    '<button class="btn-seta" data-acao="diaAnterior">◀</button>' +
+    '<div class="centro"><b>Dia ' + String(dia).padStart(2,"0") + ' de ' + estado.config.totalDias + '</b>' +
+      '<span>' + dataTxt + (dia === hoje ? ' • HOJE' : '') + '</span></div>' +
+    '<button class="btn-seta" data-acao="diaProximo">▶</button>' +
+  '</div>';
+  html += '<div class="linha-botoes" style="margin-bottom:12px;">' +
+    '<button class="btn btn-sec btn-pequeno" data-acao="diaHoje">📍 Ir para hoje (dia ' + limiteDia(hoje) + ')</button>' +
+  '</div>';
+
+  // ---- Progresso geral ----
+  if(ehAluno()){
+    const concluidos = diasConcluidosDoAluno();
+    const pct = Math.round(concluidos / estado.config.totalDias * 100);
+    html += '<div class="card">' +
+      '<h3>📈 Progresso geral</h3>' +
+      '<div class="barra verde"><i style="width:' + pct + '%"></i></div>' +
+      '<div class="legenda-barra"><span>' + concluidos + ' de ' + estado.config.totalDias + ' dias enviados</span><span>' + pct + '%</span></div>' +
+    '</div>';
+  }
+
+  // ---- Sub-abas ----
+  html += '<div class="subabas">' + SECOES.map(function(s){
+    return '<button data-acao="subAba" data-sub="' + s.id + '" class="' + (estado.ui.subAba === s.id ? "ativo" : "") + '">' +
+           s.em + ' ' + s.nome + '</button>';
+  }).join("") + '</div>';
+
+  const sub = estado.ui.subAba;
+  if(sub === "agua") html += await blocoAgua(dia);
+  else               html += await blocoSecao(dia, sub);
+
+  // ---- Botão enviar resultado ----
+  if(ehAluno()){
+    const reg = registroAluno(dia, false);
+    const enviado = reg && reg.enviado;
+    html += '<div class="card" style="margin-top:14px;">' +
+      (enviado
+        ? '<span class="badge badge-ok">✔ Enviado em ' + formatarDataHora(reg.enviadoEm) + '</span>' +
+          '<p class="ajuda">Você pode reenviar caso tenha mudado alguma marcação.</p>'
+        : '<span class="badge badge-pend">⏳ Não enviado</span>' +
+          '<p class="ajuda">Ao terminar o dia, toque no botão abaixo para registrar seu resultado.</p>') +
+      '<button class="btn ' + (enviado ? "btn-sec" : "btn-pri") + ' btn-bloco" style="margin-top:10px;" data-acao="enviarResultado">' +
+        (enviado ? "🔁 Reenviar resultado do dia" : "📤 Enviar resultado do dia") +
+      '</button>' +
+    '</div>';
+  } else {
+    html += '<div class="aviso" style="margin-top:14px;">👨‍🏫 Modo professor: aqui você cria e organiza os itens deste dia. Os alunos só marcam o checklist.</div>';
+  }
+  return html;
+}
+
+// Bloco de uma seção (físicos / treinos do dia / alimentares)
+async function blocoSecao(dia, secao){
+  const itens = itensDaSecao(dia, secao);
+  const reg = ehAluno() ? registroAluno(dia, false) : null;
+
+  let html = '<div class="card">';
+  if(ehProfessor()){
+    html += '<button class="btn btn-pri btn-pequeno" data-acao="novoItem" data-secao="' + secao + '" style="margin-bottom:10px;">➕ Adicionar item neste dia</button>';
+  }
+  if(itens.length === 0){
+    html += '<div class="vazio">Nenhum item nesta seção para este dia.</div>';
+  }
+  for(const it of itens){
+    const feito = !!(reg && reg.itens[it.id]);
+    let extra = "";
+    if(it.link){
+      const linkItem = urlExterna(it.link);
+      if(ehYouTube(linkItem) && linkYouTubeEmbed(linkItem)){
+        extra += '<div style="margin-top:8px;">' + blocoYouTube(linkItem) + '</div>';
+      }else{
+        extra += '<a class="btn btn-sec btn-pequeno" style="margin-top:8px;text-decoration:none;" href="' + esc(linkItem) + '" target="_blank" rel="noopener">🔗 Abrir link</a>';
+      }
+    }
+    if(it.treinoId){
+      const t = (estado.treinos || []).find(function(x){ return x.id === it.treinoId; });
+      if(t){
+        extra += '<button class="btn btn-sec btn-pequeno" style="margin-top:8px;" data-acao="verTreino" data-id="' + t.id + '">🏋️ Ver treino: ' + esc(t.titulo) + '</button>';
+      }
+    }
+    let acoes = "";
+    if(ehProfessor()){
+      acoes = '<div class="linha-botoes" style="margin-top:6px;">' +
+        '<button class="btn btn-sec btn-pequeno" data-acao="editarItem" data-secao="' + secao + '" data-id="' + it.id + '">✏️ Editar</button>' +
+        '<button class="btn btn-erro btn-pequeno" data-acao="excluirItem" data-secao="' + secao + '" data-id="' + it.id + '">🗑️</button>' +
+      '</div>';
+    }
+    html += '<div class="item-linha">' +
+      '<div class="txt">' + esc(it.texto) + extra + acoes + '</div>' +
+      (ehAluno()
+        ? '<button class="check ' + (feito ? "marcado" : "") + '" data-acao="alternarCheck" data-itemid="' + it.id + '" data-secao="' + secao + '" title="Marcar como feito">✓</button>'
+        : '') +
+    '</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+// Bloco da meta de água
+async function blocoAgua(dia){
+  const meta = metaAguaDoDia(dia);
+  const reg = ehAluno() ? registroAluno(dia, true) : null;
+  const agua = reg ? Number(reg.agua || 0) : 0;
+  const pct = Math.min(100, Math.round(agua / meta * 100));
+
+  let html = '<div class="card">' +
+    '<h3>💧 Meta de água de hoje</h3>' +
+    '<p class="ajuda">Meta definida pelo professor: <b>' + meta + ' L</b> por dia.</p>' +
+    '<div class="barra"><i style="width:' + pct + '%"></i></div>' +
+    '<div class="legenda-barra"><span>' + agua.toFixed(2).replace(".", ",") + ' L bebidos</span><span>' + pct + '%</span></div>';
+
+  if(ehAluno()){
+    html += '<div class="linha-botoes" style="margin-top:12px;">' +
+      '<button class="btn btn-sec" data-acao="aguaMais" data-valor="' + PASSO_AGUA + '">💧 + 250 ml</button>' +
+      '<button class="btn btn-sec" data-acao="aguaMais" data-valor="0.5">💧 + 500 ml</button>' +
+      '<button class="btn btn-sec" data-acao="aguaMenos">➖ - 250 ml</button>' +
+      '<button class="btn btn-erro btn-pequeno" data-acao="aguaZerar">Zerar</button>' +
+    '</div>' +
+    '<p class="ajuda" style="margin-top:8px;">Mínimo de copos: ' + Math.ceil(meta / 0.25) + ' copos de 250 ml para bater a meta.</p>';
+  }else{
+    html += '<label class="rotulo">Meta deste dia (litros)</label>' +
+      '<input class="campo" id="campoAguaDia" type="number" step="0.25" min="0" value="' + meta + '" />' +
+      '<button class="btn btn-pri btn-pequeno" style="margin-top:10px;" data-acao="salvarAguaDia">Salvar meta do dia</button>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function diasConcluidosDoAluno(){
+  const regs = estado.resultados[nomeAluno()] || {};
+  let n = 0;
+  Object.keys(regs).forEach(function(k){ if(regs[k].enviado) n++; });
+  return n;
+}
+
+// Resumo do dia (usado antes de enviar)
+function resumoDoDia(dia){
+  const reg = registroAluno(dia, true);
+  let total = 0, feitos = 0;
+  ["fisicos","treinosDia","alimentares"].forEach(function(secao){
+    itensDaSecao(dia, secao).forEach(function(it){
+      total++;
+      if(reg.itens[it.id]) feitos++;
+    });
+  });
+  const meta = metaAguaDoDia(dia);
+  const agua = Number(reg.agua || 0);
+  return {
+    total: total, feitos: feitos, agua: agua, meta: meta,
+    pct: total ? Math.round(feitos / total * 100) : 0
+  };
+}
+
+function abrirModalItem(secao, id){
+  const dia = estado.ui.dia;
+  const itens = itensDaSecao(dia, secao);
+  const item = id ? itens.find(function(x){ return x.id === id; }) : null;
+
+  const opcoesTreino = '<option value="">(nenhum)</option>' + (estado.treinos || []).map(function(t){
+    return '<option value="' + t.id + '"' + (item && item.treinoId === t.id ? " selected" : "") + '>' + esc(t.titulo) + '</option>';
+  }).join("");
+
+  const corpo =
+    '<label class="rotulo">Descrição do item</label>' +
+    '<input class="campo" id="itTexto" value="' + esc(item ? item.texto : "") + '" placeholder="Ex.: 30 agachamentos" />' +
+    '<label class="rotulo">Vincular um treino da biblioteca (opcional)</label>' +
+    '<select class="campo" id="itTreino">' + opcoesTreino + '</select>' +
+    '<label class="rotulo">Vídeo ou link (opcional)</label>' +
+    '<input class="campo" id="itLink" value="' + esc(item ? item.link : "") + '" placeholder="https://youtube.com/..." />' +
+    '<p class="ajuda">Dia ' + dia + ' (' + formatarData(dataDoDia(dia)) + ').</p>';
+
+  abrirModal(item ? "Editar item" : "Novo item do dia", corpo, function(){
+    const texto = $("itTexto").value.trim();
+    if(!texto){ alert("Digite a descrição do item."); return false; }
+    const dados = {
+      texto: texto,
+      treinoId: $("itTreino").value,
+      link: $("itLink").value.trim()
+    };
+    if(item){ Object.assign(item, dados); }
+    else { garantirDia(dia)[secao].push(Object.assign({ id: uid() }, dados)); }
+    salvar();
+    return true;
+  });
+}
+
+async function abrirModalVerTreino(id){
+  const t = (estado.treinos || []).find(function(x){ return x.id === id; });
+  if(!t) return;
+  const anexo = await htmlAnexo(t.anexo);
+  abrirModal(esc(t.titulo), '<div class="texto">' + esc(t.descricao) + '</div>' + anexo, null, "Fechar");
+}
+
+// Envia o resultado do dia.
+// Usa uma janela própria do app (não o "confirm/alert" do navegador), porque
+// alguns navegadores de celular bloqueiam essas janelas nativas e o botão
+// parecia "não funcionar" (nenhuma mensagem aparecia).
+function enviarResultado(){
+  const dia = estado.ui.dia;
+  const r = resumoDoDia(dia);
+
+  const corpo =
+    '<p style="margin:0 0 8px;"><b>Resumo do Dia ' + dia + '</b></p>' +
+    '<p style="margin:0;">• Itens cumpridos: <b>' + r.feitos + ' de ' + r.total + '</b> (' + r.pct + '%)<br>' +
+    '• Água: <b>' + r.agua.toFixed(2).replace(".", ",") + ' L</b> de ' + r.meta + ' L</p>' +
+    '<p class="ajuda" style="margin-top:10px;">Deseja registrar o envio do resultado deste dia?</p>';
+
+  abrirModal("📤 Enviar resultado do dia", corpo, function(){
+    const reg = registroAluno(dia, true);
+    reg.enviado = true;
+    reg.enviadoEm = new Date().toISOString();
+    salvar();
+    avisoToast("Resultado do dia " + dia + " enviado com sucesso! 🎉");
+    return true;
+  }, "Confirmar envio");
+}
+
+/* =========================================================================
+   SEÇÃO 13 - ABA RESULTADOS (SOMENTE PROFESSOR)
+   ========================================================================= */
+let filtroAluno = "";
+let filtroDia = "";
+
+async function telaResultados(){
+  const alunos = Object.keys(estado.resultados || {}).sort();
+
+  let html = '<h1 class="titulo-tela">📊 Resultados</h1>' +
+    '<p class="sub">Veja o que os alunos enviaram. Filtre por aluno e por dia.</p>';
+
+  html += '<div class="filtros">' +
+    '<select class="campo" id="filtroAlunoSel" data-acao="mudarFiltro">' +
+      '<option value="">Todos os alunos</option>' +
+      alunos.map(function(a){ return '<option value="' + esc(a) + '"' + (filtroAluno === a ? " selected" : "") + '>' + esc(a) + '</option>'; }).join("") +
+    '</select>' +
+    '<select class="campo" id="filtroDiaSel" data-acao="mudarFiltro">' +
+      '<option value="">Todos os dias</option>' +
+      Array.from({length: estado.config.totalDias}, function(_, i){ return i+1; }).map(function(d){
+        return '<option value="' + d + '"' + (String(filtroDia) === String(d) ? " selected" : "") + '>Dia ' + d + '</option>';
+      }).join("") +
+    '</select>' +
+  '</div>';
+
+  html += '<div class="linha-botoes" style="margin-bottom:12px;">' +
+    '<button class="btn btn-sec btn-pequeno" data-acao="exportarCSV">⬇️ Exportar CSV</button>' +
+  '</div>';
+
+  // Monta as linhas
+  const linhas = [];
+  alunos.forEach(function(aluno){
+    Object.keys(estado.resultados[aluno] || {}).forEach(function(dia){
+      const reg = estado.resultados[aluno][dia];
+      if(!reg.enviado) return;
+      if(filtroAluno && filtroAluno !== aluno) return;
+      if(filtroDia && String(filtroDia) !== String(dia)) return;
+      const d = Number(dia);
+      let total = 0, feitos = 0;
+      ["fisicos","treinosDia","alimentares"].forEach(function(secao){
+        itensDaSecao(d, secao).forEach(function(it){
+          total++;
+          if(reg.itens[it.id]) feitos++;
+        });
+      });
+      linhas.push({
+        aluno: aluno, dia: d, data: dataDoDia(d),
+        feitos: feitos, total: total,
+        pct: total ? Math.round(feitos / total * 100) : 0,
+        agua: Number(reg.agua || 0), meta: metaAguaDoDia(d),
+        enviadoEm: reg.enviadoEm, reg: reg
+      });
+    });
+  });
+  linhas.sort(function(a, b){ return a.aluno.localeCompare(b.aluno) || a.dia - b.dia; });
+
+  if(linhas.length === 0){
+    html += '<div class="vazio">Nenhum resultado enviado' + (alunos.length ? " com esses filtros." : " ainda.") + '</div>';
+  }
+
+  linhas.forEach(function(l){
+    let detalhe = "";
+    if(Number(filtroDia) === l.dia || String(filtroDia) === String(l.dia)){
+      const d = estado.resultados[l.aluno][String(l.dia)];
+      let lista = "";
+      const secoesTxt = { fisicos:"Desafios Físicos", treinosDia:"Treinos do dia", alimentares:"Desafios Alimentares" };
+      ["fisicos","treinosDia","alimentares"].forEach(function(secao){
+        const itens = itensDaSecao(l.dia, secao);
+        if(!itens.length) return;
+        lista += '<p style="margin:8px 0 2px;"><b>' + secoesTxt[secao] + '</b></p>';
+        itens.forEach(function(it){
+          lista += '<div>' + (d.itens[it.id] ? "✅" : "⬜") + ' ' + esc(it.texto) + '</div>';
+        });
+      });
+      detalhe = '<div class="card" style="margin-top:8px;"><h3>Detalhe</h3>' + lista +
+        '<p style="margin-top:8px;">💧 Água: <b>' + l.agua.toFixed(2).replace(".", ",") + ' L</b> de ' + l.meta + ' L</p></div>';
+    }
+    html += '<div class="card">' +
+      '<h3>🙋 ' + esc(l.aluno) + '</h3>' +
+      '<div class="data">Dia ' + l.dia + ' • ' + formatarData(l.data) + ' • enviado ' + formatarDataHora(l.enviadoEm) + '</div>' +
+      '<div class="barra verde"><i style="width:' + l.pct + '%"></i></div>' +
+      '<div class="legenda-barra"><span>' + l.feitos + ' de ' + l.total + ' itens (' + l.pct + '%)</span><span>💧 ' + l.agua.toFixed(2).replace(".", ",") + ' / ' + l.meta + ' L</span></div>' +
+      detalhe +
+    '</div>';
+  });
+
+  return html;
+}
+
+function exportarCSV(){
+  const linhas = [["Aluno","Dia","Data","Itens cumpridos","Total de itens","Percentual (%)","Agua (L)","Meta de agua (L)","Enviado em"]];
+  Object.keys(estado.resultados || {}).sort().forEach(function(aluno){
+    Object.keys(estado.resultados[aluno] || {}).forEach(function(dia){
+      const reg = estado.resultados[aluno][dia];
+      if(!reg.enviado) return;
+      const d = Number(dia);
+      let total = 0, feitos = 0;
+      ["fisicos","treinosDia","alimentares"].forEach(function(secao){
+        itensDaSecao(d, secao).forEach(function(it){ total++; if(reg.itens[it.id]) feitos++; });
+      });
+      linhas.push([
+        aluno, d, formatarData(dataDoDia(d)), feitos, total,
+        (total ? Math.round(feitos / total * 100) : 0),
+        Number(reg.agua || 0).toFixed(2).replace(".", ","),
+        metaAguaDoDia(d),
+        formatarDataHora(reg.enviadoEm)
+      ]);
+    });
+  });
+
+  const csv = linhas.map(function(l){
+    return l.map(function(c){ return '"' + String(c).replace(/"/g, '""') + '"'; }).join(";");
+  }).join("\r\n");
+
+  baixarArquivo("resultados-desafio-funciona-21.csv", "\uFEFF" + csv, "text/csv;charset=utf-8");
+}
+
+/* =========================================================================
+   SEÇÃO 14 - ABA CONFIGURAÇÕES (SOMENTE PROFESSOR)
+   ========================================================================= */
+async function telaConfig(){
+  const c = estado.config;
+
+  // Mede o que já está ocupado neste navegador (útil para saber se cabe mais vídeo)
+  let qtdArquivos = 0, bytesArquivos = 0;
+  try{
+    const ids = await Files.listar();
+    qtdArquivos = ids.length;
+    for(const id of ids){
+      const b = await Files.pegar(id);
+      if(b) bytesArquivos += b.size;
+    }
+  }catch(e){}
+
+  return '' +
+  '<h1 class="titulo-tela">⚙️ Configurações</h1>' +
+  '<p class="sub">Ajustes gerais do desafio e backup dos dados.</p>' +
+
+  '<div class="card">' +
+    '<h3>🔑 Senha do professor</h3>' +
+    '<label class="rotulo">Nova senha</label>' +
+    '<input class="campo" id="cfgSenha" type="text" value="' + esc(c.senhaProfessor) + '" />' +
+    '<p class="ajuda">Esta senha é apenas uma trava simples de navegação, sem segurança real (o código é aberto e roda no navegador).</p>' +
+  '</div>' +
+
+  '<div class="card">' +
+    '<h3>📅 Data de início do desafio</h3>' +
+    '<input class="campo" id="cfgInicio" type="date" value="' + esc(c.inicioDesafio) + '" />' +
+    '<p class="ajuda">O dia 1 do desafio será a data escolhida acima.</p>' +
+    '<h3 style="margin-top:16px;">💧 Meta de água padrão (litros)</h3>' +
+    '<input class="campo" id="cfgAgua" type="number" step="0.25" min="0" value="' + esc(c.metaAgua) + '" />' +
+    '<p class="ajuda">Vale para os dias que não tiverem meta própria definida no Desafio Diário.</p>' +
+    '<button class="btn btn-pri btn-bloco" style="margin-top:12px;" data-acao="salvarConfig">💾 Salvar configurações</button>' +
+  '</div>' +
+
+  '<div class="card">' +
+    '<h3>💾 Backup dos dados</h3>' +
+    '<p class="ajuda">Exporte um arquivo JSON para levar os dados para outro aparelho, e importe depois no outro aparelho.</p>' +
+    '<div class="linha-botoes" style="margin-top:10px;">' +
+      '<button class="btn btn-sec" data-acao="exportarBackup">⬆️ Exportar backup (JSON)</button>' +
+      '<button class="btn btn-sec" data-acao="importarBackup">⬇️ Importar backup (JSON)</button>' +
+    '</div>' +
+  '</div>' +
+
+  '<div class="card">' +
+    '<h3>☁️ Sincronizar com os alunos (GitHub)</h3>' +
+    '<p class="ajuda">Publique o conteúdo uma vez e envie um único link aos alunos. ' +
+      'Eles recebem tudo o que você postar e continuam com os resultados salvos no aparelho deles.</p>' +
+    '<p class="ajuda"><b>⚠️ Atenção:</b> fotos/vídeos enviados direto do aparelho ficam só no seu celular e ' +
+      '<b>não aparecem para os alunos</b> na sincronização. Para os alunos verem, use <b>LINKS</b> ' +
+      '(YouTube, Google Drive, etc.) nos anexos.</p>' +
+    '<label class="rotulo">Usuário (ou organização) do GitHub</label>' +
+    '<input class="campo" id="cfgGhDono" placeholder="Ex.: maria-silva" value="' + esc(c.ghDono || "") + '" />' +
+    '<label class="rotulo">Nome do repositório</label>' +
+    '<input class="campo" id="cfgGhRepo" placeholder="Ex.: desafio21" value="' + esc(c.ghRepo || "") + '" />' +
+    '<label class="rotulo">Arquivo dentro do repositório</label>' +
+    '<input class="campo" id="cfgGhCaminho" placeholder="dados.json" value="' + esc(c.ghCaminho || "dados.json") + '" />' +
+    '<label class="rotulo">Ramo (branch)</label>' +
+    '<input class="campo" id="cfgGhBranch" placeholder="main" value="' + esc(c.ghBranch || "main") + '" />' +
+    '<label class="rotulo">Token do GitHub (fica só neste aparelho)</label>' +
+    '<input class="campo" id="cfgGhToken" type="password" placeholder="ghp_..." value="' + esc(tokenGH()) + '" />' +
+    '<p class="ajuda">O token funciona como uma senha de acesso ao seu GitHub. Ele NÃO é publicado e fica salvo apenas neste aparelho.</p>' +
+    '<button class="btn btn-pri btn-bloco" style="margin-top:12px;" data-acao="salvarSync">💾 Salvar dados da sincronização</button>' +
+    '<div class="linha-botoes" style="margin-top:10px;">' +
+      '<button class="btn btn-pri" data-acao="publicarConteudo">⬆️ Publicar para os alunos</button>' +
+      '<button class="btn btn-sec" data-acao="baixarConteudoGH">⬇️ Baixar do GitHub</button>' +
+    '</div>' +
+    (linkDosAlunos()
+      ? '<p class="ajuda" style="margin-top:12px;">🔗 Link para enviar aos alunos:<br><b>' + esc(linkDosAlunos()) + '</b></p>' +
+        '<button class="btn btn-sec btn-bloco" style="margin-top:8px;" data-acao="copiarLinkAlunos">📋 Copiar link dos alunos</button>'
+      : '<p class="ajuda" style="margin-top:12px;">Depois de preencher e salvar, o link para os alunos aparecerá aqui.</p>') +
+    '<div id="syncStatus" class="sync-status' + (syncStatusMsg ? " " + (syncStatusMsg.ok ? "ok" : "erro") : "") + '">' + (syncStatusMsg ? esc(syncStatusMsg.texto) : "") + '</div>' +
+  '</div>' +
+
+  '<div class="card">' +
+    '<h3>📦 Espaço usado neste aparelho</h3>' +
+    '<p class="ajuda">' +
+      'Textos, resultados e configurações: <b>' + formatarTamanho((JSON.stringify(estado) || "").length) + '</b><br>' +
+      'Arquivos enviados (fotos, vídeos, PDFs): <b>' + formatarTamanho(bytesArquivos) + '</b> em ' + qtdArquivos + ' arquivo(s)' +
+    '</p>' +
+    '<p class="ajuda">' +
+      'Limites por anexo: imagem ' + LIMITES_ARQUIVO.imagem + ' MB • vídeo ' + LIMITES_ARQUIVO.video + ' MB • arquivo ' + LIMITES_ARQUIVO.arquivo + ' MB.' +
+    '</p>' +
+  '</div>' +
+
+  '<div class="card">' +
+    '<h3>🧹 Zerar tudo</h3>' +
+    '<p class="ajuda">Apaga notícias, treinos, nutrição, desafios, resultados e arquivos enviados.</p>' +
+    '<button class="btn btn-erro btn-bloco" style="margin-top:10px;" data-acao="apagarTudo">🗑️ Apagar todos os dados</button>' +
+  '</div>' +
+
+  '<div class="aviso aviso-amarelo">' +
+    '<b>⚠️ Importante sobre onde os dados ficam salvos</b><br>' +
+    'O conteúdo (notícias, treinos, nutrição e desafios) e os resultados são salvos <b>somente no navegador deste aparelho</b>. ' +
+    'Use o cartão <b>“Sincronizar com os alunos (GitHub)”</b> acima para publicar o conteúdo e enviar um único link aos alunos — ' +
+    'assim eles veem o que você postar pelo botão <b>🔄</b>. Os resultados de cada aluno continuam privados, no aparelho dele. ' +
+    'Para levar tudo manualmente a outro aparelho, use <b>Exportar backup</b> e <b>Importar backup</b>.<br><br>' +
+    '<b>Dica sobre vídeos:</b> para enviar vídeos grandes, o ideal é abrir o app por um endereço http(s) ' +
+    '(hospedado ou em um servidor local). Alguns navegadores limitam o armazenamento de arquivos quando o ' +
+    'app é aberto direto do disco (endereço file://). Nesse caso, use o LINK do YouTube/Google Drive.' +
+  '</div>';
+}
+
+function salvarConfiguracoes(){
+  const senha = $("cfgSenha").value.trim();
+  if(!senha){ alert("A senha não pode ficar vazia."); return; }
+  estado.config.senhaProfessor = senha;
+  estado.config.inicioDesafio = $("cfgInicio").value || estado.config.inicioDesafio;
+  const agua = Number($("cfgAgua").value);
+  estado.config.metaAgua = (isNaN(agua) || agua <= 0) ? 3 : agua;
+  salvar();
+  alert("Configurações salvas.");
+  render();
+}
+
+/* =========================================================================
+   SEÇÃO 15 - BACKUP (EXPORTAR / IMPORTAR)
+   O backup em JSON inclui também os arquivos enviados, convertidos em base64.
+   Arquivos muito grandes podem ser deixados de fora para o backup não travar.
+   ========================================================================= */
+function baixarArquivo(nome, conteudo, tipo){
+  const blob = new Blob([conteudo], { type: tipo || "application/octet-stream" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = nome;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 2000);
+}
+
+function blobParaBase64(blob){
+  return new Promise(function(res, rej){
+    const r = new FileReader();
+    r.onload = function(){ res(r.result); };
+    r.onerror = function(){ rej(r.error); };
+    r.readAsDataURL(blob);
+  });
+}
+function base64ParaBlob(dataUrl){
+  const p = String(dataUrl).split(",");
+  const meta = p[0];
+  const tipo = (meta.match(/:(.*?);/) || [])[1] || "application/octet-stream";
+  const bin = atob(p[1]);
+  const arr = new Uint8Array(bin.length);
+  for(let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+  return new Blob([arr], { type: tipo });
+}
+
+async function exportarBackup(){
+  const pacote = { app: "Desafio Funciona 21", versao: 2, geradoEm: new Date().toISOString(), dados: estado, arquivos: {}, arquivosIgnorados: 0 };
+
+  const ids = await Files.listar();
+  const blobs = {};
+  let totalBytes = 0;
+  for(const id of ids){
+    const blob = await Files.pegar(id);
+    if(blob){ blobs[id] = blob; totalBytes += blob.size; }
+  }
+
+  // Se houver arquivos grandes (vídeos), pergunta antes para não travar o navegador
+  let incluirTudo = true;
+  if(totalBytes > 40 * 1024 * 1024){
+    incluirTudo = confirm("Seus anexos somam " + formatarTamanho(totalBytes) + " (vídeos, fotos, PDFs).\n\n" +
+      "Clique OK para incluir TUDO no backup (pode demorar e gerar um arquivo grande, mas é o backup completo).\n" +
+      "Clique CANCELAR para incluir apenas os arquivos até 15 MB (backup leve).");
+  }
+
+  for(const id in blobs){
+    const b = blobs[id];
+    if(!incluirTudo && b.size > 15 * 1024 * 1024){ pacote.arquivosIgnorados++; continue; }
+    try{ pacote.arquivos[id] = await blobParaBase64(b); }
+    catch(e){ pacote.arquivosIgnorados++; }
+  }
+
+  pacote.sessao = null;
+  baixarArquivo("backup-desafio-funciona-21.json", JSON.stringify(pacote), "application/json");
+
+  if(pacote.arquivosIgnorados){
+    alert("Backup gerado!\n\n" + pacote.arquivosIgnorados + " arquivo(s) grande(s) NÃO foram incluídos neste backup.\n" +
+          "Se precisar levá-los para outro aparelho, use LINKS (YouTube / Google Drive) no lugar do upload.");
+  }else{
+    alert("Backup gerado! Guarde esse arquivo com cuidado.");
+  }
+}
+
+async function importarBackup(arquivo){
+  const texto = await arquivo.text();
+  let pacote;
+  try{ pacote = JSON.parse(texto); }
+  catch(e){ alert("Arquivo inválido. Escolha um backup gerado pelo app."); return; }
+  if(!pacote || !pacote.dados){ alert("Este arquivo não parece ser um backup do Desafio Funciona 21."); return; }
+  if(!confirm("Importar o backup vai SUBSTITUIR os dados atuais deste aparelho. Continuar?")) return;
+
+  estado = pacote.dados;
+  estado.sessao = estado.sessao || null;
+
+  if(pacote.arquivos){
+    for(const id in pacote.arquivos){
+      try{ await Files.salvar(id, base64ParaBlob(pacote.arquivos[id])); }catch(e){}
+    }
+  }
+  // Limpa endereços antigos de arquivos
+  for(const k in cacheUrls){ URL.revokeObjectURL(cacheUrls[k]); delete cacheUrls[k]; }
+
+  normalizar();
+  salvar();
+  salvarSessao();
+
+  if(pacote.arquivosIgnorados){
+    alert("Backup importado!\n\nAtenção: " + pacote.arquivosIgnorados + " arquivo(s) grande(s) não vieram neste backup.");
+  }else{
+    alert("Backup importado com sucesso!");
+  }
+  render();
+}
+
+async function apagarTudo(){
+  if(!confirm("Tem certeza que deseja APAGAR TODOS OS DADOS? Esta ação não pode ser desfeita.")) return;
+  if(!confirm("Confirme novamente: apagar tudo agora?")) return;
+  try{ await Files.limpar(); }catch(e){}
+  for(const k in cacheUrls){ URL.revokeObjectURL(cacheUrls[k]); delete cacheUrls[k]; }
+  localStorage.removeItem(CHAVE_DADOS);
+  localStorage.removeItem(CHAVE_SESSAO);
+  estado = dadosIniciais();
+  estado.sessao = null;
+  salvar();
+  render();
+  alert("Todos os dados foram apagados.");
+}
+
+/* =========================================================================
+   SEÇÃO 15-B - SINCRONIZAÇÃO COM OS ALUNOS (GitHub + GitHub Pages)
+   Como funciona (100% grátis, sem servidor próprio):
+   - O professor guarda o CONTEÚDO (notícias, treinos, nutrição e desafios)
+     no arquivo "dados.json" dentro de um repositório PÚBLICO do GitHub.
+   - O professor toca em "Publicar": o app envia esse arquivo para o GitHub.
+   - Os alunos abrem o app pelo endereço do GitHub Pages e o app baixa o
+     arquivo, recebendo as atualizações do professor (no botão 🔄 ou ao abrir).
+   - Os RESULTADOS de cada aluno ficam salvos SÓ no aparelho dele.
+   ========================================================================= */
+
+// Mensagem de status mostrada na aba Configurações (sobrevive ao render)
+let syncStatusMsg = null;
+
+function mostrarSync(msg, ok){
+  syncStatusMsg = { texto: msg, ok: !!ok };
+  const el = $("syncStatus");
+  if(el){ el.className = "sync-status " + (ok ? "ok" : "erro"); el.textContent = msg; }
+  avisoToast((ok ? "✅ " : "⚠️ ") + msg);
+}
+
+// Lê os campos de sincronização salvos no app
+function ghInfo(){
+  const c = estado.config || {};
+  return {
+    dono: String(c.ghDono || "").trim(),
+    repo: String(c.ghRepo || "").trim(),
+    caminho: String(c.ghCaminho || "dados.json").trim().replace(/^\/+/, "") || "dados.json",
+    branch: String(c.ghBranch || "main").trim() || "main"
+  };
+}
+function tokenGH(){
+  try{ return localStorage.getItem(CHAVE_TOKEN_GH) || ""; }catch(e){ return ""; }
+}
+function salvarTokenGH(t){
+  try{
+    const v = String(t || "").trim();
+    if(v) localStorage.setItem(CHAVE_TOKEN_GH, v);
+    else localStorage.removeItem(CHAVE_TOKEN_GH);
+  }catch(e){}
+}
+function ultimaSyncSalva(){
+  try{ return localStorage.getItem(CHAVE_ULTIMA_SYNC) || ""; }catch(e){ return ""; }
+}
+
+// Endereço do site que o professor envia para os alunos
+function linkDosAlunos(){
+  const g = ghInfo();
+  if(!g.dono || !g.repo) return "";
+  if(g.repo.toLowerCase() === (g.dono + ".github.io").toLowerCase()) return "https://" + g.dono + ".github.io/";
+  return "https://" + g.dono + ".github.io/" + g.repo + "/";
+}
+
+// Pacote de conteúdo que será publicado (SEM senha do professor e SEM resultados)
+function conteudoPublicavel(){
+  const c = estado.config || {};
+  return {
+    app: "Desafio Funciona 21",
+    tipo: "conteudo",
+    versao: 1,
+    atualizadoEm: new Date().toISOString(),
+    config: {
+      inicioDesafio: c.inicioDesafio,
+      metaAgua: c.metaAgua,
+      totalDias: c.totalDias,
+      // origem: permite que o aluno saiba de onde atualizar depois
+      ghDono: c.ghDono,
+      ghRepo: c.ghRepo,
+      ghCaminho: c.ghCaminho,
+      ghBranch: c.ghBranch
+    },
+    noticias: estado.noticias || [],
+    treinos: estado.treinos || [],
+    nutricao: estado.nutricao || [],
+    desafios: estado.desafios || {}
+  };
+}
+
+// Aplica o conteúdo baixado, MANTENDO os resultados/sessão/tela locais do aluno
+function aplicarConteudo(remoto){
+  if(!remoto || typeof remoto !== "object") return false;
+  estado.config = Object.assign({}, estado.config, remoto.config || {});
+  estado.noticias = remoto.noticias || [];
+  estado.treinos = remoto.treinos || [];
+  estado.nutricao = remoto.nutricao || [];
+  estado.desafios = remoto.desafios || {};
+  normalizar();
+  salvar();
+  try{ localStorage.setItem(CHAVE_ULTIMA_SYNC, String(remoto.atualizadoEm || "")); }catch(e){}
+  return true;
+}
+
+// Texto -> base64 respeitando acentos (o GitHub exige base64)
+function base64DeUtf8(txt){
+  const bytes = new TextEncoder().encode(String(txt));
+  let bin = "";
+  for(let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+  return btoa(bin);
+}
+
+// Diz de onde baixar o conteúdo
+function origemDoConteudo(){
+  const g = ghInfo();
+  if(g.dono && g.repo){
+    return "https://api.github.com/repos/" + g.dono + "/" + g.repo + "/contents/" + g.caminho +
+           "?ref=" + encodeURIComponent(g.branch);
+  }
+  // Sem repositório configurado: tenta o arquivo que fica ao lado da própria página
+  if(location.protocol === "http:" || location.protocol === "https:") return "dados.json";
+  return "";
+}
+
+async function lerConteudoRemoto(){
+  const origem = origemDoConteudo();
+  if(!origem) throw new Error("Nenhum endereço de conteúdo configurado. Peça o link ao professor.");
+  const cabecalhos = { "Accept": "application/vnd.github.raw+json" };
+  const t = tokenGH();
+  if(t) cabecalhos.Authorization = "Bearer " + t;
+  const url = origem + (origem.indexOf("?") >= 0 ? "&" : "?") + "cache=" + Date.now();
+  const resp = await fetch(url, { headers: cabecalhos, cache: "no-store" });
+  if(resp.status === 404) throw new Error("O conteúdo ainda não foi publicado pelo professor.");
+  if(resp.status === 403) throw new Error("Limite de acessos ao GitHub atingido. Tente novamente mais tarde.");
+  if(!resp.ok) throw new Error("Não foi possível baixar o conteúdo (código " + resp.status + ").");
+  const texto = await resp.text();
+  return JSON.parse(texto);
+}
+
+// Sincronização (usada tanto pelo botão 🔄 do topo quanto pelo da aba Configurações)
+async function sincronizar(manual){
+  try{
+    const remoto = await lerConteudoRemoto();
+    if(!remoto || !remoto.atualizadoEm){
+      if(manual) mostrarSync("O conteúdo do professor não foi encontrado.", false);
+      return;
+    }
+    if(remoto.atualizadoEm === ultimaSyncSalva()){
+      if(manual) mostrarSync("Você já está com a versão mais recente.", true);
+      return;
+    }
+    aplicarConteudo(remoto);
+    if(manual){ mostrarSync("Conteúdo atualizado com sucesso!", true); }
+    else{ avisoToast("Conteúdo atualizado pelo professor ✅"); }
+    if(estado.sessao) render();
+  }catch(e){
+    if(manual) mostrarSync(e && e.message ? e.message : "Não foi possível atualizar agora.", false);
+  }
+}
+
+// Salva os campos da sincronização digitados na aba Configurações
+function salvarSincronizacao(){
+  estado.config.ghDono = $("cfgGhDono").value.trim();
+  estado.config.ghRepo = $("cfgGhRepo").value.trim();
+  estado.config.ghCaminho = $("cfgGhCaminho").value.trim() || "dados.json";
+  estado.config.ghBranch = $("cfgGhBranch").value.trim() || "main";
+  salvarTokenGH($("cfgGhToken").value);
+  salvar();
+  mostrarSync("Dados da sincronização salvos.", true);
+  render();
+}
+
+// PUBLICAR: envia o conteúdo para o repositório do GitHub (só o professor)
+async function publicarConteudo(){
+  const g = ghInfo();
+  const t = tokenGH();
+  if(!g.dono || !g.repo){ mostrarSync("Preencha o usuário e o repositório do GitHub.", false); return; }
+  if(!t){ mostrarSync("Cole o seu token do GitHub para poder publicar.", false); return; }
+
+  const api = "https://api.github.com/repos/" + g.dono + "/" + g.repo + "/contents/" + g.caminho;
+  const cab = { "Authorization": "Bearer " + t, "Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28" };
+
+  // 1) Descobre se o arquivo já existe (para pegar o "sha", exigido para atualizar)
+  let sha = null;
+  try{
+    const r = await fetch(api + "?ref=" + encodeURIComponent(g.branch), { headers: cab, cache: "no-store" });
+    if(r.ok){ const j = await r.json(); sha = j && j.sha ? j.sha : null; }
+    else if(r.status === 401){ mostrarSync("Token inválido ou expirado. Gere um novo token.", false); return; }
+    else if(r.status === 404){ sha = null; }
+    else { const j = await r.json().catch(function(){ return {}; }); mostrarSync("Não foi possível acessar o repositório: " + (j.message || r.status), false); return; }
+  }catch(e){ mostrarSync("Sem conexão com o GitHub. Verifique a internet.", false); return; }
+
+  // 2) Monta e envia o arquivo
+  const pacote = conteudoPublicavel();
+  const corpo = {
+    message: "Atualiza conteúdo do Desafio Funciona 21 (" + new Date().toLocaleString("pt-BR") + ")",
+    content: base64DeUtf8(JSON.stringify(pacote, null, 2)),
+    branch: g.branch
+  };
+  if(sha) corpo.sha = sha;
+
+  let resp;
+  try{
+    resp = await fetch(api, { method: "PUT", headers: cab, body: JSON.stringify(corpo) });
+  }catch(e){ mostrarSync("Sem conexão com o GitHub. Tente novamente.", false); return; }
+
+  if(resp.ok){
+    try{ localStorage.setItem(CHAVE_ULTIMA_SYNC, pacote.atualizadoEm); }catch(e){}
+    mostrarSync("Conteúdo publicado! Agora os alunos podem atualizar.", true);
+  }else{
+    const j = await resp.json().catch(function(){ return {}; });
+    if(resp.status === 401 || resp.status === 403){
+      mostrarSync("Token sem permissão de escrita. Gere um token com acesso ao repositório. " + (j.message || ""), false);
+    }else{
+      mostrarSync("Não foi possível publicar: " + (j.message || resp.status), false);
+    }
+  }
+}
+
+async function copiarLinkAlunos(){
+  const link = linkDosAlunos();
+  if(!link){ mostrarSync("Preencha o usuário e o repositório primeiro.", false); return; }
+  try{
+    await navigator.clipboard.writeText(link);
+    mostrarSync("Link copiado! Envie aos alunos: " + link, true);
+  }catch(e){
+    mostrarSync("Envie este link aos alunos: " + link, true);
+  }
+}
+
+// Tenta atualizar sozinho quando o app abre (apenas para alunos)
+async function sincronizarAutomatico(){
+  if(!ehAluno()) return;
+  try{
+    const remoto = await lerConteudoRemoto();
+    if(remoto && remoto.atualizadoEm && remoto.atualizadoEm !== ultimaSyncSalva()){
+      aplicarConteudo(remoto);
+      avisoToast("Conteúdo atualizado pelo professor ✅");
+      render();
+    }
+  }catch(e){ /* offline ou ainda sem conteúdo publicado: segue normalmente */ }
+}
+
+/* =========================================================================
+   SEÇÃO 16 - MODAL E IMAGEM AMPLIADA
+   ========================================================================= */
+let modalAcao = null;
+
+function abrirModal(titulo, corpoHtml, aoSalvar, textoBotao){
+  modalAcao = aoSalvar;
+  $("modalRaiz").innerHTML =
+    '<div class="modal-fundo" data-acao="fecharModalFundo">' +
+      '<div class="modal">' +
+        '<h3>' + titulo + '</h3>' +
+        '<div>' + corpoHtml + '</div>' +
+        '<div class="modal-acoes">' +
+          '<button class="btn btn-sec" data-acao="fecharModal">' + (aoSalvar ? "Cancelar" : (textoBotao || "Fechar")) + '</button>' +
+          (aoSalvar ? '<button class="btn btn-pri" data-acao="salvarModal">' + (textoBotao || "Salvar") + '</button>' : '') +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  document.body.style.overflow = "hidden";
+}
+function fecharModal(){
+  modalAcao = null;
+  $("modalRaiz").innerHTML = "";
+  document.body.style.overflow = "";
+}
+async function acionarSalvarModal(){
+  if(!modalAcao){ fecharModal(); return; }
+
+  // Mostra que está salvando (importante em vídeos grandes)
+  const btnSalvar = document.querySelector('[data-acao="salvarModal"]');
+  const textoOriginal = btnSalvar ? btnSalvar.textContent : "";
+  if(btnSalvar){ btnSalvar.textContent = "Salvando..."; btnSalvar.style.opacity = ".7"; btnSalvar.style.pointerEvents = "none"; }
+
+  let resultado = false;
+  try{
+    resultado = await modalAcao();
+  }catch(e){
+    alert("Ocorreu um erro ao salvar. Tente novamente.\n\nDetalhe: " + (e && e.message ? e.message : e));
+    resultado = false;
+  }
+
+  if(resultado === false){
+    if(btnSalvar){ btnSalvar.textContent = textoOriginal; btnSalvar.style.opacity = ""; btnSalvar.style.pointerEvents = ""; }
+    return;   // validação falhou, mantém o modal aberto
+  }
+  fecharModal();
+  render();
+}
+
+function ampliarImagem(url){
+  const lb = $("lightbox");
+  lb.innerHTML = '<button class="fechar" data-acao="fecharImagem">✕</button><img src="' + esc(url) + '" alt="Imagem ampliada">';
+  lb.hidden = false;
+  document.body.style.overflow = "hidden";
+}
+function fecharImagem(){
+  $("lightbox").hidden = true;
+  $("lightbox").innerHTML = "";
+  document.body.style.overflow = "";
+}
+
+// Aviso rápido que aparece na tela (substitui o "alert" do navegador,
+// que pode ser bloqueado em alguns celulares).
+function avisoToast(texto){
+  const box = $("toastBox");
+  if(!box) return;
+  const item = document.createElement("div");
+  item.className = "toast";
+  item.textContent = texto;
+  box.appendChild(item);
+  setTimeout(function(){ item.classList.add("sair"); }, 2800);
+  setTimeout(function(){ if(item.parentNode) item.parentNode.removeChild(item); }, 3300);
+}
+
+/* =========================================================================
+   SEÇÃO 17 - EVENTOS (cliques e mudanças)
+   ========================================================================= */
+document.addEventListener("click", async function(ev){
+  const alvo = ev.target.closest("[data-acao]");
+  if(!alvo) return;
+  const acao = alvo.getAttribute("data-acao");
+
+  // --- Login / sessão ---
+  if(acao === "entrarAluno"){
+    const nome = $("entradaNomeAluno").value.trim();
+    if(!nome){ alert("Digite seu nome para entrar."); return; }
+    estado.sessao = { tipo:"aluno", nome: nome };
+    estado.ui.aba = "noticias";
+    estado.ui.dia = limiteDia(diaDeHoje());
+    salvar(); salvarSessao(); render();
+    sincronizarAutomatico();
+    return;
+  }
+  if(acao === "entrarProfessor"){
+    const senha = $("entradaSenha").value;
+    if(senha !== estado.config.senhaProfessor){ alert("Senha incorreta."); return; }
+    estado.sessao = { tipo:"professor", nome:"Professor" };
+    estado.ui.aba = "noticias";
+    salvar(); salvarSessao(); render();
+    return;
+  }
+  if(acao === "sair"){
+    if(!confirm("Deseja sair do aplicativo?")) return;
+    estado.sessao = null;
+    salvarSessao(); render();
+    return;
+  }
+
+  // --- Navegação ---
+  if(acao === "ir"){ estado.ui.aba = alvo.getAttribute("data-aba"); window.scrollTo(0,0); render(); return; }
+  if(acao === "subAba"){ estado.ui.subAba = alvo.getAttribute("data-sub"); render(); return; }
+  if(acao === "diaAnterior"){ estado.ui.dia = limiteDia(estado.ui.dia - 1); render(); return; }
+  if(acao === "diaProximo"){ estado.ui.dia = limiteDia(estado.ui.dia + 1); render(); return; }
+  if(acao === "diaHoje"){ estado.ui.dia = limiteDia(diaDeHoje()); render(); return; }
+
+  // --- Notícias ---
+  if(acao === "novaNoticia"){ abrirModalNoticia(null); return; }
+  if(acao === "editarNoticia"){ abrirModalNoticia(alvo.getAttribute("data-id")); return; }
+  if(acao === "excluirNoticia"){
+    const id = alvo.getAttribute("data-id");
+    const n = estado.noticias.find(function(x){ return x.id === id; });
+    if(!n) return;
+    if(!confirm('Excluir a notícia "' + n.titulo + '"? Esta ação não pode ser desfeita.')) return;
+    if(n.imgFileId) await Files.apagar(n.imgFileId);
+    estado.noticias = estado.noticias.filter(function(x){ return x.id !== id; });
+    salvar(); render(); return;
+  }
+
+  // --- Treinos / Nutrição ---
+  if(acao === "novoConteudo"){ abrirModalConteudo(alvo.getAttribute("data-aba"), null); return; }
+  if(acao === "editarConteudo"){ abrirModalConteudo(alvo.getAttribute("data-aba"), alvo.getAttribute("data-id")); return; }
+  if(acao === "excluirConteudo"){
+    const aba = alvo.getAttribute("data-aba");
+    const id = alvo.getAttribute("data-id");
+    const item = (estado[aba] || []).find(function(x){ return x.id === id; });
+    if(!item) return;
+    if(!confirm('Excluir o conteúdo "' + item.titulo + '"? Esta ação não pode ser desfeita.')) return;
+    if(item.anexo && item.anexo.fileId) await Files.apagar(item.anexo.fileId);
+    estado[aba] = estado[aba].filter(function(x){ return x.id !== id; });
+    salvar(); render(); return;
+  }
+
+  // --- Desafio diário ---
+  if(acao === "novoItem"){ abrirModalItem(alvo.getAttribute("data-secao"), null); return; }
+  if(acao === "editarItem"){ abrirModalItem(alvo.getAttribute("data-secao"), alvo.getAttribute("data-id")); return; }
+  if(acao === "excluirItem"){
+    const secao = alvo.getAttribute("data-secao");
+    const id = alvo.getAttribute("data-id");
+    const dia = estado.ui.dia;
+    const itens = itensDaSecao(dia, secao);
+    const item = itens.find(function(x){ return x.id === id; });
+    if(!item) return;
+    if(!confirm('Excluir o item "' + item.texto + '"?')) return;
+    const d = garantirDia(dia);
+    d[secao] = d[secao].filter(function(x){ return x.id !== id; });
+    salvar(); render(); return;
+  }
+  if(acao === "verTreino"){ abrirModalVerTreino(alvo.getAttribute("data-id")); return; }
+  if(acao === "alternarCheck"){
+    const id = alvo.getAttribute("data-itemid");
+    const reg = registroAluno(estado.ui.dia, true);
+    reg.itens[id] = !reg.itens[id];
+    salvar(); render(); return;
+  }
+  if(acao === "aguaMais"){
+    const reg = registroAluno(estado.ui.dia, true);
+    reg.agua = Number((Number(reg.agua || 0) + Number(alvo.getAttribute("data-valor"))).toFixed(2));
+    salvar(); render(); return;
+  }
+  if(acao === "aguaMenos"){
+    const reg = registroAluno(estado.ui.dia, true);
+    reg.agua = Math.max(0, Number((Number(reg.agua || 0) - PASSO_AGUA).toFixed(2)));
+    salvar(); render(); return;
+  }
+  if(acao === "aguaZerar"){
+    const reg = registroAluno(estado.ui.dia, true);
+    reg.agua = 0; salvar(); render(); return;
+  }
+  if(acao === "salvarAguaDia"){
+    const v = Number($("campoAguaDia").value);
+    if(isNaN(v) || v <= 0){ alert("Informe um valor de água válido (maior que zero)."); return; }
+    garantirDia(estado.ui.dia).agua = v;
+    salvar(); render(); return;
+  }
+  if(acao === "enviarResultado"){ enviarResultado(); return; }
+
+  // --- Resultados ---
+  if(acao === "exportarCSV"){ exportarCSV(); return; }
+
+  // --- Configurações ---
+  if(acao === "salvarConfig"){ salvarConfiguracoes(); return; }
+  if(acao === "exportarBackup"){ await exportarBackup(); return; }
+  if(acao === "importarBackup"){ $("inputImportBackup").click(); return; }
+  if(acao === "apagarTudo"){ await apagarTudo(); return; }
+
+  // --- Sincronização (GitHub) ---
+  if(acao === "salvarSync"){ salvarSincronizacao(); return; }
+  if(acao === "publicarConteudo"){ await publicarConteudo(); return; }
+  if(acao === "baixarConteudoGH"){ await sincronizar(true); return; }
+  if(acao === "copiarLinkAlunos"){ await copiarLinkAlunos(); return; }
+  if(acao === "atualizarConteudo"){
+    alvo.classList.add("girando");
+    await sincronizar(true);
+    return;
+  }
+
+  // --- Modal / imagem ---
+  if(acao === "fecharModal"){ fecharModal(); return; }
+  if(acao === "fecharModalFundo"){
+    if(ev.target.getAttribute("data-acao") === "fecharModalFundo") fecharModal();
+    return;
+  }
+  if(acao === "salvarModal"){ await acionarSalvarModal(); return; }
+  if(acao === "ampliarImg"){ ampliarImagem(alvo.getAttribute("data-url")); return; }
+  if(acao === "fecharImagem"){ fecharImagem(); return; }
+});
+
+// Fechar modal / imagem com a tecla ESC
+document.addEventListener("keydown", function(ev){
+  if(ev.key !== "Escape") return;
+  if(!$("lightbox").hidden){ fecharImagem(); return; }
+  if($("modalRaiz").innerHTML) fecharModal();
+});
+
+// Mudança de tipo de anexo, escolha de arquivo e filtros
+document.addEventListener("change", function(ev){
+  const alvo = ev.target;
+  const acao = alvo.getAttribute ? alvo.getAttribute("data-acao") : "";
+  if(acao === "mudarTipoAnexo"){ atualizarCamposAnexo(); mostrarPreviewArquivo(); }
+  if(acao === "escolherArquivo"){
+    if($("ctArquivo")) mostrarPreviewArquivo();
+    if($("ntArquivo")) atualizarPreviewSimples("ntArquivo", "ntPreview");
+  }
+  if(acao === "mudarFiltro"){
+    filtroAluno = $("filtroAlunoSel").value;
+    filtroDia = $("filtroDiaSel").value;
+    render();
+  }
+});
+
+// Importação de backup
+$("inputImportBackup").addEventListener("change", function(ev){
+  const f = ev.target.files && ev.target.files[0];
+  if(f) importarBackup(f);
+  ev.target.value = "";
+});
+
+/* =========================================================================
+   SEÇÃO 18 - INICIALIZAÇÃO
+   ========================================================================= */
+normalizar();
+salvar();
+render();
+sincronizarAutomatico();
+</script>
+</body>
+</html>
