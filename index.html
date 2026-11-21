@@ -735,6 +735,16 @@ function normalizar(){
   estado.nutricao = estado.nutricao || [];
   estado.desafios = estado.desafios || {};
   estado.resultados = estado.resultados || {};
+  // Limpa registros de dias vazios/nulos (podem vir da nuvem ou de versões antigas)
+  Object.keys(estado.resultados).forEach(function(aluno){
+    const dias = estado.resultados[aluno];
+    if(!dias || typeof dias !== "object"){ delete estado.resultados[aluno]; return; }
+    Object.keys(dias).forEach(function(dia){
+      const r = dias[dia];
+      if(!r || typeof r !== "object"){ delete dias[dia]; return; }
+      if(!r.itens || typeof r.itens !== "object") r.itens = {};
+    });
+  });
   estado.ui = Object.assign({}, base.ui, estado.ui || {});
   // sessão: restaura do armazenamento (para não pedir login toda hora)
   if(!estado.sessao){
@@ -1597,15 +1607,16 @@ function telaResultados(){
   alunos.forEach(function(aluno){
     Object.keys(estado.resultados[aluno] || {}).forEach(function(dia){
       const reg = estado.resultados[aluno][dia];
-      if(!reg.enviado) return;
+      if(!reg || !reg.enviado) return;
       if(filtroAluno && filtroAluno !== aluno) return;
       if(filtroDia && String(filtroDia) !== String(dia)) return;
       const d = Number(dia);
+      const itensReg = reg.itens || {};
       let total = 0, feitos = 0;
       ["fisicos","treinosDia","alimentares"].forEach(function(secao){
         itensDaSecao(d, secao).forEach(function(it){
           total++;
-          if(reg.itens[it.id]) feitos++;
+          if(itensReg[it.id]) feitos++;
         });
       });
       linhas.push({
@@ -1634,7 +1645,7 @@ function telaResultados(){
         if(!itens.length) return;
         lista += '<p style="margin:8px 0 2px;"><b>' + secoesTxt[secao] + '</b></p>';
         itens.forEach(function(it){
-          lista += '<div>' + (d.itens[it.id] ? "✅" : "⬜") + ' ' + esc(it.texto) + '</div>';
+          lista += '<div>' + ((d && d.itens && d.itens[it.id]) ? "✅" : "⬜") + ' ' + esc(it.texto) + '</div>';
         });
       });
       detalhe = '<div class="card" style="margin-top:8px;"><h3>Detalhe</h3>' + lista +
@@ -1657,11 +1668,12 @@ function exportarCSV(){
   Object.keys(estado.resultados || {}).sort().forEach(function(aluno){
     Object.keys(estado.resultados[aluno] || {}).forEach(function(dia){
       const reg = estado.resultados[aluno][dia];
-      if(!reg.enviado) return;
+      if(!reg || !reg.enviado) return;
       const d = Number(dia);
+      const itensReg = reg.itens || {};
       let total = 0, feitos = 0;
       ["fisicos","treinosDia","alimentares"].forEach(function(secao){
-        itensDaSecao(d, secao).forEach(function(it){ total++; if(reg.itens[it.id]) feitos++; });
+        itensDaSecao(d, secao).forEach(function(it){ total++; if(itensReg[it.id]) feitos++; });
       });
       linhas.push([
         aluno, d, formatarData(dataDoDia(d)), feitos, total,
@@ -2223,8 +2235,10 @@ async function buscarResultadosNuvem(){
     const nome = item.nome || k;
     const atual = estado.resultados[nome] || {};
     Object.keys(item.dias).forEach(function(dia){
-      const novo = JSON.stringify(item.dias[dia]);
-      if(novo !== JSON.stringify(atual[dia] || null)){ atual[dia] = item.dias[dia]; mudou++; }
+      const novoDia = item.dias[dia];
+      if(!novoDia || typeof novoDia !== "object") return;   // ignora dias vazios/nulos
+      const novo = JSON.stringify(novoDia);
+      if(novo !== JSON.stringify(atual[dia] || null)){ atual[dia] = novoDia; mudou++; }
     });
     estado.resultados[nome] = atual;
   });
