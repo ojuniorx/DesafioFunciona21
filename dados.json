@@ -2,7 +2,7 @@
   "app": "Desafio Funciona 21",
   "tipo": "conteudo",
   "versao": 1,
-  "atualizadoEm": "2026-11-21T20:38:37.026Z",
+  "atualizadoEm": "2026-11-22T01:26:10.295Z",
   "config": {
     "inicioDesafio": "2026-11-21",
     "metaAgua": 3,
@@ -98,85 +98,324 @@
       "agua": 3,
       "fisicos": [
         {
-          "id": "mwqod9z3upezs",
-          "texto": "20 agachamentos",
-          "treinoId": "",
-          "link": ""
-        },
-        {
-          "id": "mwqod9z3x8yo8",
-          "texto": "1 minuto de prancha (pode dividir em 3x20s)",
+          "id": "mwr04pz3rj3r5",
+          "texto": "caminhada 20 min",
           "treinoId": "",
           "link": ""
         }
       ],
       "treinosDia": [
         {
-          "id": "mwqod9z3dnkuj",
-          "texto": "Treino Full Body - Dia 1",
+          "id": "mwr04yq8v3oyl",
+          "texto": "Funcional Dia 1 — YouTube",
           "treinoId": "",
           "link": ""
         }
       ],
-      "alimentares": [
-        {
-          "id": "mwqod9z3g6ibl",
-          "texto": "Beber 3 litros de água no dia",
-          "treinoId": "",
-          "link": ""
-        },
-        {
-          "id": "mwqod9z30sw7q",
-          "texto": "Nenhum refrigerante",
-          "treinoId": "",
-          "link": ""
-        },
-        {
-          "id": "mwqod9z30qt1v",
-          "texto": "Comer 2 porções de frutas",
-          "treinoId": "",
-          "link": ""
-        }
-      ]
+      "alimentares": []
     },
     "2": {
       "agua": 3,
       "fisicos": [
         {
-          "id": "mwqq2dc6orxre",
-          "texto": "10 burpes",
-          "treinoId": "",
-          "link": ""
-        },
-        {
-          "id": "mwqq2jhzsz3pa",
-          "texto": "20 agacha",
-          "treinoId": "",
-          "link": ""
-        },
-        {
-          "id": "mwqq2p3nabptv",
-          "texto": "15 min caminhada",
+          "id": "mwr02i9giqsxh",
+          "texto": "caminhada 25 min",
           "treinoId": "",
           "link": ""
         }
       ],
       "treinosDia": [
         {
-          "id": "mwqq2y336tnq6",
-          "texto": "Funcional dia 2",
-          "treinoId": "mwqq0yct8kzd5",
-          "link": ""
-        }
-      ],
-      "alimentares": [
-        {
-          "id": "mwqq3eg2pr0c3",
-          "texto": "toma 1 Café sem açucar",
+          "id": "mwr01vxly3pc9",
+          "texto": "Caminhada leve ou outra atividade 25 min",
           "treinoId": "",
           "link": ""
         }
-      ]
+      ],
+      "alimentares": []
+    },
+    "3": {
+      "agua": 3,
+      "fisicos": [],
+      "treinosDia": [
+        {
+          "id": "mwr06ev98gc44",
+          "texto": "Aeróbica com Bastão #1",
+          "treinoId": "",
+          "link": ""
+        }
+      ],
+      "alimentares": []
+    },
+    "4": {
+      "agua": 3,
+      "fisicos": [],
+      "treinosDia": [
+        {
+          "id": "mwr07b2cotmjd",
+          "texto": "Caminhada ou atividade leve 20 min",
+          "treinoId": "",
+          "link": ""
+        }
+      ],
+      "alimentares": []
+    },
+    "5": {
+      "agua": 3,
+      "fisicos": [],
+      "treinosDia": [
+        {
+          "id": "mwr07lvpkn29t",
+          "texto": "GAP Aula 1",
+          "treinoId": "",
+          "link": ""
+        }
+      ],
+      "alimentares": []
+    },
+    "6": {
+      "agua": 3,
+      "fisicos": [],
+      "treinosDia": [
+        {
+          "id": "mwr08ktcgtqhw",
+          "texto": "Caminhada 15 min",
+          "treinoId": "",
+          "link": ""
+        },
+        {
+          "id": "mwr08ri1z1gov",
+          "texto": "corrida 10 min",
+          "treinoId": "",
+          "link": ""
+        }
+      ],
+      "alimentares": []
+    },
+    "7": {
+      "agua": 3,
+      "fisicos": [],
+      "treinosDia": [
+        {
+          "id": "mwr09arzzcfu3",
+          "texto": "Funcional aula 1",
+          "treinoId": "",
+          "link": ""
+        }
+      ],
+      "alimentares": []
+    },
+    "8": {
+      "agua": 3,
+      "fisicos": [],
+      "treinosDia": [
+        {
+          "id": "mwr09y3928yqh",
+          "texto": "Funcional aula 2",
+          "treinoId": "",
+          "link": ""
+        }
+      ],
+      "alimentares": []
+    },
+    "9": {
+      "agua": 3,
+      "fisicos": [],
+      "treinosDia": [
+        {
+          "id": "mwr0a976bnd4n",
+          "texto": "Caminhada 28 min",
+          "treinoId": "",
+          "link": ""
+        }
+      ],
+      "alimentares": []
+    },
+    "10": {
+      "agua": 3,
+      "fisicos": [],
+      "treinosDia": [
+        {
+          "id": "mwr0ahuzz0hz0",
+          "texto": "Aeróbica com Bastão Aula 2",
+          "treinoId": "",
+          "link": ""
+        }
+      ],
+      "alimentares": []
+    },
+    "11": {
+      "agua": 3,
+      "fisicos": [],
+      "treinosDia": [
+        {
+          "id": "mwr0az5d6yr6s",
+          "texto": "Atividade leve ou mobilidade 21 min",
+          "treinoId": "",
+          "link": ""
+        }
+      ],
+      "alimentares": []
+    },
+    "12": {
+      "agua": 3,
+      "fisicos": [],
+      "treinosDia": [
+        {
+          "id": "mwr0b83lqugz7",
+          "texto": "GAP Aula 2",
+          "treinoId": "",
+          "link": ""
+        }
+      ],
+      "alimentares": []
+    },
+    "13": {
+      "agua": 3,
+      "fisicos": [],
+      "treinosDia": [
+        {
+          "id": "mwr0blf3dxg2v",
+          "texto": "Caminhada, dança ou atividade recreativa 30 min",
+          "treinoId": "",
+          "link": ""
+        }
+      ],
+      "alimentares": []
+    },
+    "14": {
+      "agua": 3,
+      "fisicos": [],
+      "treinosDia": [
+        {
+          "id": "mwr0btlv55grc",
+          "texto": "Gap Aula 2",
+          "treinoId": "",
+          "link": ""
+        }
+      ],
+      "alimentares": []
+    },
+    "15": {
+      "agua": 3,
+      "fisicos": [],
+      "treinosDia": [
+        {
+          "id": "mwr0ced68f35z",
+          "texto": "Funcional Aula 3",
+          "treinoId": "",
+          "link": ""
+        }
+      ],
+      "alimentares": []
+    },
+    "16": {
+      "agua": 3,
+      "fisicos": [],
+      "treinosDia": [
+        {
+          "id": "mwr0cvdjacb55",
+          "texto": "Corrida 15 min",
+          "treinoId": "",
+          "link": ""
+        },
+        {
+          "id": "mwr0czxbrbjom",
+          "texto": "Caminhada 10 min",
+          "treinoId": "",
+          "link": ""
+        }
+      ],
+      "alimentares": []
+    },
+    "17": {
+      "agua": 3,
+      "fisicos": [],
+      "treinosDia": [
+        {
+          "id": "mwr0dhjl7vy6b",
+          "texto": "Aeróbica com Bastão Aula 3",
+          "treinoId": "",
+          "link": ""
+        }
+      ],
+      "alimentares": []
+    },
+    "18": {
+      "agua": 3,
+      "fisicos": [],
+      "treinosDia": [
+        {
+          "id": "mwr0e4qv9lhvk",
+          "texto": "Mobilidade 10 min",
+          "treinoId": "",
+          "link": ""
+        },
+        {
+          "id": "mwr0eiip9pnqk",
+          "texto": "Caminhada leve 15 min",
+          "treinoId": "",
+          "link": ""
+        },
+        {
+          "id": "mwr0fhusruezg",
+          "texto": "Corrida 10 min",
+          "treinoId": "",
+          "link": ""
+        }
+      ],
+      "alimentares": []
+    },
+    "19": {
+      "agua": 3,
+      "fisicos": [],
+      "treinosDia": [
+        {
+          "id": "mwr0fs4toee2u",
+          "texto": "GAP Aula 3",
+          "treinoId": "",
+          "link": ""
+        }
+      ],
+      "alimentares": []
+    },
+    "20": {
+      "agua": 3,
+      "fisicos": [],
+      "treinosDia": [
+        {
+          "id": "mwr0gb03yjorp",
+          "texto": "Funcional Aula 3",
+          "treinoId": "",
+          "link": ""
+        },
+        {
+          "id": "mwr0gok8zg4lp",
+          "texto": "Mobilide 15 min",
+          "treinoId": "",
+          "link": ""
+        }
+      ],
+      "alimentares": []
+    },
+    "21": {
+      "agua": 3,
+      "fisicos": [],
+      "treinosDia": [
+        {
+          "id": "mwr0i91x6y7tq",
+          "texto": "Corrida 20 min",
+          "treinoId": "",
+          "link": ""
+        },
+        {
+          "id": "mwr0iw0001tu7",
+          "texto": "Gap, Funcional ou Aerobica 1, 2, ou 3",
+          "treinoId": "",
+          "link": ""
+        }
+      ],
+      "alimentares": []
     }
   }
 }
