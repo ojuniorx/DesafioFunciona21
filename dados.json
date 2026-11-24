@@ -2,7 +2,7 @@
   "app": "Desafio Funciona 21",
   "tipo": "conteudo",
   "versao": 1,
-  "atualizadoEm": "2026-11-24T16:23:53.119Z",
+  "atualizadoEm": "2026-11-24T16:43:41.728Z",
   "config": {
     "inicioDesafio": "2026-11-21",
     "metaAgua": 3,
@@ -136,7 +136,14 @@
     },
     "3": {
       "agua": 3,
-      "fisicos": [],
+      "fisicos": [
+        {
+          "id": "mwuwstkossy2m",
+          "texto": "Polichinelos 3 séries de 10",
+          "treinoId": "",
+          "link": ""
+        }
+      ],
       "treinosDia": [
         {
           "id": "mwr06ev98gc44",
@@ -149,7 +156,14 @@
     },
     "4": {
       "agua": 3,
-      "fisicos": [],
+      "fisicos": [
+        {
+          "id": "mwuwt77rbp3qc",
+          "texto": "Caminhada em ritmo confortável\t20 minutos",
+          "treinoId": "",
+          "link": ""
+        }
+      ],
       "treinosDia": [
         {
           "id": "mwr07b2cotmjd",
@@ -162,7 +176,14 @@
     },
     "5": {
       "agua": 3,
-      "fisicos": [],
+      "fisicos": [
+        {
+          "id": "mwuwtkw217d9v",
+          "texto": "Agachamento livre\t3 séries de 10",
+          "treinoId": "",
+          "link": ""
+        }
+      ],
       "treinosDia": [
         {
           "id": "mwr07lvpkn29t",
@@ -175,7 +196,14 @@
     },
     "6": {
       "agua": 3,
-      "fisicos": [],
+      "fisicos": [
+        {
+          "id": "mwuwty11k9406",
+          "texto": "Dançar uma música de sua preferência\t10 minutos",
+          "treinoId": "",
+          "link": ""
+        }
+      ],
       "treinosDia": [
         {
           "id": "mwr08ktcgtqhw",
@@ -194,7 +222,14 @@
     },
     "7": {
       "agua": 3,
-      "fisicos": [],
+      "fisicos": [
+        {
+          "id": "mwuwuaqlwexf6",
+          "texto": "Caminhada em ritmo moderado\t20 minutos",
+          "treinoId": "",
+          "link": ""
+        }
+      ],
       "treinosDia": [
         {
           "id": "mwr09arzzcfu3",
@@ -207,7 +242,20 @@
     },
     "8": {
       "agua": 3,
-      "fisicos": [],
+      "fisicos": [
+        {
+          "id": "mwuwv4j1dra6f",
+          "texto": "Caminhada\t20 minutos",
+          "treinoId": "",
+          "link": ""
+        },
+        {
+          "id": "mwuwvajqoy1ps",
+          "texto": "Agachamento livre\t3 séries de 12",
+          "treinoId": "",
+          "link": ""
+        }
+      ],
       "treinosDia": [
         {
           "id": "mwr09y3928yqh",
@@ -220,7 +268,20 @@
     },
     "9": {
       "agua": 3,
-      "fisicos": [],
+      "fisicos": [
+        {
+          "id": "mwuwvm921fycr",
+          "texto": "Polichinelos\t3 séries de 15",
+          "treinoId": "",
+          "link": ""
+        },
+        {
+          "id": "mwuww8u9uptbn",
+          "texto": "Prancha alta 3 séries de 1 minuto",
+          "treinoId": "",
+          "link": ""
+        }
+      ],
       "treinosDia": [
         {
           "id": "mwr0a976bnd4n",
@@ -233,7 +294,20 @@
     },
     "10": {
       "agua": 3,
-      "fisicos": [],
+      "fisicos": [
+        {
+          "id": "mwuwwkazx6ex1",
+          "texto": "Agachamento livre\t3 séries de 15",
+          "treinoId": "",
+          "link": ""
+        },
+        {
+          "id": "mwuwwrc4u21ht",
+          "texto": "Caminhada\t15 minutos",
+          "treinoId": "",
+          "link": ""
+        }
+      ],
       "treinosDia": [
         {
           "id": "mwr0ahuzz0hz0",
@@ -246,7 +320,20 @@
     },
     "11": {
       "agua": 3,
-      "fisicos": [],
+      "fisicos": [
+        {
+          "id": "mwuwwzatkapmx",
+          "texto": "Dança\t10 minutos",
+          "treinoId": "",
+          "link": ""
+        },
+        {
+          "id": "mwuwx9rn41cj9",
+          "texto": "Elevação de joelhos alternados\t3 séries de 20",
+          "treinoId": "",
+          "link": "https://www.youtube.com/shorts/vXv9daV_pKA"
+        }
+      ],
       "treinosDia": [
         {
           "id": "mwr0az5d6yr6s",
@@ -259,7 +346,20 @@
     },
     "12": {
       "agua": 3,
-      "fisicos": [],
+      "fisicos": [
+        {
+          "id": "mwuwyaumllpw3",
+          "texto": "Corrida leve ou caminhada acelerada\t15 minutos",
+          "treinoId": "",
+          "link": ""
+        },
+        {
+          "id": "mwuwz4elhdplv",
+          "texto": "Flexão de braço na parede\t3 séries de 10",
+          "treinoId": "",
+          "link": "https://www.youtube.com/shorts/sgy0w9_s2jE"
+        }
+      ],
       "treinosDia": [
         {
           "id": "mwr0b83lqugz7",
@@ -272,7 +372,20 @@
     },
     "13": {
       "agua": 3,
-      "fisicos": [],
+      "fisicos": [
+        {
+          "id": "mwuwzlnhke895",
+          "texto": "Polichinelos 3 séries de 15",
+          "treinoId": "",
+          "link": ""
+        },
+        {
+          "id": "mwuwzzbbqk12m",
+          "texto": "Agachamento livre\t3 séries de 15",
+          "treinoId": "",
+          "link": ""
+        }
+      ],
       "treinosDia": [
         {
           "id": "mwr0blf3dxg2v",
@@ -285,7 +398,20 @@
     },
     "14": {
       "agua": 3,
-      "fisicos": [],
+      "fisicos": [
+        {
+          "id": "mwux0cfpljd8t",
+          "texto": "Caminhada\t25 minutos",
+          "treinoId": "",
+          "link": ""
+        },
+        {
+          "id": "mwux0pcywa00q",
+          "texto": "Prancha com apoio dos joelhos\t3 séries de 30 segundos",
+          "treinoId": "",
+          "link": "https://www.youtube.com/shorts/LnF7FrM0K7w"
+        }
+      ],
       "treinosDia": [
         {
           "id": "mwr0btlv55grc",
@@ -298,7 +424,26 @@
     },
     "15": {
       "agua": 3,
-      "fisicos": [],
+      "fisicos": [
+        {
+          "id": "mwux20azys8a1",
+          "texto": "Caminhada | 20 minutos |",
+          "treinoId": "",
+          "link": ""
+        },
+        {
+          "id": "mwux26b9wnj8s",
+          "texto": "Agachamento livre | 3 séries de 15 |",
+          "treinoId": "",
+          "link": ""
+        },
+        {
+          "id": "mwux2clhrjv6d",
+          "texto": "Polichinelos | 3 séries de 15 |",
+          "treinoId": "",
+          "link": ""
+        }
+      ],
       "treinosDia": [
         {
           "id": "mwr0ced68f35z",
@@ -311,7 +456,20 @@
     },
     "16": {
       "agua": 3,
-      "fisicos": [],
+      "fisicos": [
+        {
+          "id": "mwux2ugmboncy",
+          "texto": "Flexão na parede | 3 séries de 12 |",
+          "treinoId": "",
+          "link": "https://www.youtube.com/shorts/sgy0w9_s2jE"
+        },
+        {
+          "id": "mwux3natljiy5",
+          "texto": "Abdominal curto | 3 séries de 10 |",
+          "treinoId": "",
+          "link": "https://www.youtube.com/shorts/4k6JNjEeKxY"
+        }
+      ],
       "treinosDia": [
         {
           "id": "mwr0cvdjacb55",
@@ -330,7 +488,20 @@
     },
     "17": {
       "agua": 3,
-      "fisicos": [],
+      "fisicos": [
+        {
+          "id": "mwux3ya5mkhfp",
+          "texto": "Agachamento livre | 3 séries de 15 |",
+          "treinoId": "",
+          "link": ""
+        },
+        {
+          "id": "mwux4gqjsz4o3",
+          "texto": "Elevação de joelhos alternados | 3 séries de 20 |",
+          "treinoId": "",
+          "link": "https://www.youtube.com/shorts/vXv9daV_pKA"
+        }
+      ],
       "treinosDia": [
         {
           "id": "mwr0dhjl7vy6b",
@@ -343,7 +514,20 @@
     },
     "18": {
       "agua": 3,
-      "fisicos": [],
+      "fisicos": [
+        {
+          "id": "mwux52ok9xa4g",
+          "texto": "Ponte de glúteos | 3 séries de 15 |",
+          "treinoId": "",
+          "link": "https://www.youtube.com/shorts/1satDE63Bwc"
+        },
+        {
+          "id": "mwux6y9x1nhj2",
+          "texto": "Prancha com joelhos apoiados | 3 séries de 20 segundos |",
+          "treinoId": "",
+          "link": "https://www.youtube.com/shorts/LnF7FrM0K7w"
+        }
+      ],
       "treinosDia": [
         {
           "id": "mwr0e4qv9lhvk",
@@ -368,7 +552,20 @@
     },
     "19": {
       "agua": 3,
-      "fisicos": [],
+      "fisicos": [
+        {
+          "id": "mwux7cuwqxnx3",
+          "texto": "Agachamento livre | 3 séries de 15 |",
+          "treinoId": "",
+          "link": ""
+        },
+        {
+          "id": "mwux7yij26xtf",
+          "texto": "Dança | 15 minutos",
+          "treinoId": "",
+          "link": ""
+        }
+      ],
       "treinosDia": [
         {
           "id": "mwr0fs4toee2u",
@@ -381,7 +578,26 @@
     },
     "20": {
       "agua": 3,
-      "fisicos": [],
+      "fisicos": [
+        {
+          "id": "mwux8a6rvgnem",
+          "texto": "Caminhada ou corrida leve | 25 minutos |",
+          "treinoId": "",
+          "link": ""
+        },
+        {
+          "id": "mwux9x79c6nr7",
+          "texto": "Flexão de braço com joelhos | 3 séries de 12 |",
+          "treinoId": "",
+          "link": "https://www.youtube.com/shorts/NUMT1kjIbjI"
+        },
+        {
+          "id": "mwuxb1ihd1821",
+          "texto": "Abdominal curto | 3 séries de 12 |",
+          "treinoId": "",
+          "link": ""
+        }
+      ],
       "treinosDia": [
         {
           "id": "mwr0gb03yjorp",
@@ -400,7 +616,20 @@
     },
     "21": {
       "agua": 3,
-      "fisicos": [],
+      "fisicos": [
+        {
+          "id": "mwuxbg0s178lb",
+          "texto": "Agachamento livre | 3 séries de 15 |",
+          "treinoId": "",
+          "link": ""
+        },
+        {
+          "id": "mwuxbn7owoqau",
+          "texto": "Dança ou atividade aeróbica de preferência | 10 minutos |",
+          "treinoId": "",
+          "link": ""
+        }
+      ],
       "treinosDia": [
         {
           "id": "mwr0i91x6y7tq",
