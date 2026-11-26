@@ -2,7 +2,7 @@
   "app": "Desafio Funciona 21",
   "tipo": "conteudo",
   "versao": 1,
-  "atualizadoEm": "2026-11-26T19:21:19.333Z",
+  "atualizadoEm": "2026-11-26T21:27:08.122Z",
   "config": {
     "inicioDesafio": "2026-11-21",
     "metaAgua": 3,
@@ -79,6 +79,18 @@
         "fileId": "",
         "nome": ""
       }
+    },
+    {
+      "id": "mwy23gkque7eu",
+      "titulo": "Café da Manhã ☕️",
+      "categoria": "Semana 1",
+      "descricao": "Frutas:\nMamão \nBanana \nMelão \nUva \nMelancia \n\nSementes:\nChia \nLinhaça dourada \nGergilin \nPepita de abóbora \n\nCarboidratos:\n\nPão de Forma Integral \nCuscuz\nTapioca \nCrepioca \nBatata Doce \n\nProteínas: \nOvo\nFrango desfiado \nFilé de Frango \nQueijo coalho \n\n\n",
+      "anexo": {
+        "tipo": "nenhum",
+        "url": "",
+        "fileId": "",
+        "nome": ""
+      }
     }
   ],
   "desafios": {
@@ -100,7 +112,14 @@
           "link": ""
         }
       ],
-      "alimentares": []
+      "alimentares": [
+        {
+          "id": "mwy2bo00tt9sk",
+          "texto": "Tomar 1,5 L de água pela manhã",
+          "treinoId": "",
+          "link": ""
+        }
+      ]
     },
     "2": {
       "agua": 3,
