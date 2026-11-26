@@ -2,7 +2,7 @@
   "app": "Desafio Funciona 21",
   "tipo": "conteudo",
   "versao": 1,
-  "atualizadoEm": "2026-11-26T19:08:31.908Z",
+  "atualizadoEm": "2026-11-26T19:21:19.333Z",
   "config": {
     "inicioDesafio": "2026-11-21",
     "metaAgua": 3,
@@ -37,15 +37,6 @@
       "data": "2026-11-21",
       "texto": "1. Cada atividade poderá ser contabilizada apenas uma vez.\n2. Não será permitido pontuar duas vezes pela mesma atividade.\n3. O bônus por mais de duas atividades exige pelo menos três atividades diferentes no mesmo dia.\n4. A pontuação máxima diária será de 60 pontos.\n5. Todas as atividades deverão ser comprovadas para validação da equipe.",
       "imgUrl": "https://i.pinimg.com/736x/c3/25/fa/c325fa703351895733d34c49dac9a6c5.jpg",
-      "imgFileId": "",
-      "link": ""
-    },
-    {
-      "id": "mwwoh11wm1r04",
-      "titulo": "Live tirando duvidas as 19hrs dia 25",
-      "data": "2026-11-25",
-      "texto": "",
-      "imgUrl": "",
       "imgFileId": "",
       "link": ""
     }
@@ -88,18 +79,6 @@
         "fileId": "",
         "nome": ""
       }
-    },
-    {
-      "id": "mwqq24slin185",
-      "titulo": "Melhore seu almoço",
-      "categoria": "dica da tarde",
-      "descricao": "com um prato cheio, porém de otimos nutrientes",
-      "anexo": {
-        "tipo": "imagem",
-        "url": "https://i.pinimg.com/736x/bf/22/3f/bf223fcf02b17b09834b414c55211251.jpg",
-        "fileId": "",
-        "nome": ""
-      }
     }
   ],
   "desafios": {
@@ -121,14 +100,7 @@
           "link": ""
         }
       ],
-      "alimentares": [
-        {
-          "id": "mwwoniqevs70f",
-          "texto": "Tomar água logo quando acordar",
-          "treinoId": "",
-          "link": ""
-        }
-      ]
+      "alimentares": []
     },
     "2": {
       "agua": 3,
@@ -208,14 +180,7 @@
           "link": ""
         }
       ],
-      "alimentares": [
-        {
-          "id": "mwwomjq3m12ou",
-          "texto": "Comer 50 maçãs",
-          "treinoId": "",
-          "link": ""
-        }
-      ]
+      "alimentares": []
     },
     "6": {
       "agua": 3,
