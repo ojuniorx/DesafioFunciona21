@@ -2,7 +2,7 @@
   "app": "Desafio Funciona 21",
   "tipo": "conteudo",
   "versao": 1,
-  "atualizadoEm": "2026-11-24T16:43:41.728Z",
+  "atualizadoEm": "2026-11-26T19:08:31.908Z",
   "config": {
     "inicioDesafio": "2026-11-21",
     "metaAgua": 3,
@@ -37,6 +37,15 @@
       "data": "2026-11-21",
       "texto": "1. Cada atividade poderá ser contabilizada apenas uma vez.\n2. Não será permitido pontuar duas vezes pela mesma atividade.\n3. O bônus por mais de duas atividades exige pelo menos três atividades diferentes no mesmo dia.\n4. A pontuação máxima diária será de 60 pontos.\n5. Todas as atividades deverão ser comprovadas para validação da equipe.",
       "imgUrl": "https://i.pinimg.com/736x/c3/25/fa/c325fa703351895733d34c49dac9a6c5.jpg",
+      "imgFileId": "",
+      "link": ""
+    },
+    {
+      "id": "mwwoh11wm1r04",
+      "titulo": "Live tirando duvidas as 19hrs dia 25",
+      "data": "2026-11-25",
+      "texto": "",
+      "imgUrl": "",
       "imgFileId": "",
       "link": ""
     }
@@ -95,7 +104,7 @@
   ],
   "desafios": {
     "1": {
-      "agua": 3,
+      "agua": 4,
       "fisicos": [
         {
           "id": "mwr04pz3rj3r5",
@@ -112,7 +121,14 @@
           "link": ""
         }
       ],
-      "alimentares": []
+      "alimentares": [
+        {
+          "id": "mwwoniqevs70f",
+          "texto": "Tomar água logo quando acordar",
+          "treinoId": "",
+          "link": ""
+        }
+      ]
     },
     "2": {
       "agua": 3,
@@ -192,7 +208,14 @@
           "link": ""
         }
       ],
-      "alimentares": []
+      "alimentares": [
+        {
+          "id": "mwwomjq3m12ou",
+          "texto": "Comer 50 maçãs",
+          "treinoId": "",
+          "link": ""
+        }
+      ]
     },
     "6": {
       "agua": 3,
